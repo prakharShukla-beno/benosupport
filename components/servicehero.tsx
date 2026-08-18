@@ -177,14 +177,23 @@ function ServiceHero({
                 {primaryCtaLabel}
               </button>
             )}
+
+
+
             {secondaryCtaProps.href ? (
-              <Link
-                href={secondaryCtaProps.href}
-                className="rounded-lg border border-white/30 px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-white/10"
-              >
-                {secondaryCtaLabel}
-              </Link>
-            ) : (
+  <Link
+    href={secondaryCtaProps.href}
+    target={secondaryCtaProps.target}
+    rel={secondaryCtaProps.rel}
+    className="rounded-lg border border-white/30 px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-white/10"
+  >
+    Talk to Expert
+  </Link>
+) : (
+
+
+
+
               <button
                 type="button"
                 onClick={secondaryCtaProps.onClick}

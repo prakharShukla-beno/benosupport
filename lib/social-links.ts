@@ -1,3 +1,5 @@
+export const WHATSAPP_URL = "https://wa.me/918929884560"
+
 export const SOCIAL_LINKS = [
   // {
   //   href: "https://twitter.com/benosupport",

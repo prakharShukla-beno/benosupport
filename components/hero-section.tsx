@@ -5,7 +5,7 @@ import { FileText, BadgeCheck, UserRoundCheck } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import { PartnerStrip } from "./partnerStrip"
 import { useProposalModal } from "@/hooks/use-proposal-modal"
-import { CONTACT_GET_IN_TOUCH_HREF } from "@/lib/proposal-cta"
+import { WHATSAPP_URL } from "@/lib/social-links"
 import Link from "next/link"
 
 // Pre-defined headline lines for clean stagger reveal (balanced length per line)
@@ -244,7 +244,9 @@ export function HeroSection() {
                Request a Proposal
               </button>
               <Link
-                href={CONTACT_GET_IN_TOUCH_HREF}
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="h-[50px] px-8 rounded-xl border-[0.5px] border-white text-white text-[15px] font-semibold hover:bg-blue-900 transition-colors active:scale-[0.98] inline-flex items-center justify-center"
               >
                 Talk to an Expert

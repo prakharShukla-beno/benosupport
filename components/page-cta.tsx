@@ -41,6 +41,8 @@ type PageCTAButtonProps = {
   className?: string
   href?: string
   onClick?: () => void
+  target?: string
+  rel?: string
 }
 
 export function PageCTAPrimaryButton({
@@ -48,10 +50,12 @@ export function PageCTAPrimaryButton({
   className,
   href,
   onClick,
+  target,
+  rel,
 }: PageCTAButtonProps) {
   if (href) {
     return (
-      <Link href={href} className={cn(primaryBtnClass, className)}>
+      <Link href={href} target={target} rel={rel} className={cn(primaryBtnClass, className)}>
         {children}
       </Link>
     )
@@ -73,10 +77,12 @@ export function PageCTAOutlineButton({
   className,
   href,
   onClick,
+  target,
+  rel,
 }: PageCTAButtonProps) {
   if (href) {
     return (
-      <Link href={href} className={cn(outlineBtnClass, className)}>
+      <Link href={href} target={target} rel={rel} className={cn(outlineBtnClass, className)}>
         {children}
       </Link>
     )

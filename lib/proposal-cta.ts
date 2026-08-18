@@ -1,4 +1,7 @@
+import { WHATSAPP_URL } from "@/lib/social-links"
+
 export const CONTACT_GET_IN_TOUCH_HREF = "/contact#contact-form"
+export const TALK_TO_EXPERT_HREF = WHATSAPP_URL
 
 const TALK_TO_PATTERN = /^talk\s+to\b/i
 
@@ -19,9 +22,9 @@ export function isProposalCtaText(text: string): boolean {
 export function getCtaButtonProps(
   label: string,
   openProposalModal: () => void
-): { href?: string; onClick?: () => void } {
+): { href?: string; onClick?: () => void; target?: string; rel?: string } {
   if (isTalkToExpertsCtaText(label)) {
-    return { href: CONTACT_GET_IN_TOUCH_HREF }
+    return { href: TALK_TO_EXPERT_HREF, target: "_blank", rel: "noopener noreferrer" }
   }
   return { onClick: openProposalModal }
 }

@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react"
-import { useProposalModal } from "@/hooks/use-proposal-modal"
-import { CONTACT_GET_IN_TOUCH_HREF } from "@/lib/proposal-cta"
+import { TALK_TO_EXPERT_HREF } from "@/lib/proposal-cta"
 import Link from "next/link"
 import { SOCIAL_LINKS } from "@/lib/social-links"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
@@ -25,7 +24,7 @@ export default function Hero({
   imageRef,
   socialRef,
 }: HeroProps) {
-  const { openProposalModal } = useProposalModal()
+  // const { openProposalModal } = useProposalModal()
 
   // const XIcon = () => (
   //   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -114,19 +113,13 @@ export default function Hero({
           </p>
 
           <div ref={heroBtnsRef} className="flex flex-wrap gap-4">
-            <button
-              type="button"
-              onClick={openProposalModal}
+            <Link
+              href={TALK_TO_EXPERT_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-lg bg-[#0A3A73] px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-[#124e96]"
             >
-              Schedule a Consultation
-            </button>
-
-            <Link
-              href={CONTACT_GET_IN_TOUCH_HREF}
-              className="rounded-lg border border-white/30 px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-white/10"
-            >
-              Talk to an Expert
+              Talk to Expert
             </Link>
           </div>
         </div>

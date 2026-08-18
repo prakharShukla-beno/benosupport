@@ -5,7 +5,7 @@ import Link from "next/link"
 import { gsap } from "@/lib/gsap"
 import { Menu, X, ChevronDown, Globe, BookOpen, LayoutGrid } from "lucide-react"
 import { SERVICE_NAV_ITEMS } from "@/lib/site-navigation"
-import { useRouter } from "next/navigation"
+import { WHATSAPP_URL } from "@/lib/social-links"
 
 import { usePathname } from "next/navigation"
 
@@ -68,7 +68,6 @@ export function SiteHeader() {
   const resIsOpenRef    = useRef(false)
   const logoRef  = useRef<HTMLDivElement>(null)
   const langRef  = useRef<HTMLDivElement>(null)
-  const router   = useRouter()
 
   const pathname = usePathname()
 
@@ -354,11 +353,13 @@ export function SiteHeader() {
               </div>
 
               {/* CTA button */}
-              <button
-                onClick={() => router.push("/contact")}
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`
                   px-6 py-2.5 text-[15px] font-semibold rounded-xl
-                  transition-colors duration-300
+                  transition-colors duration-300 inline-flex items-center
                   ${isScrolled
                     ? "bg-[#072448] text-white hover:bg-[#0a2d5c]"
                     : "border border-white/40 text-white hover:bg-white/10"
@@ -366,12 +367,12 @@ export function SiteHeader() {
                 `}
               >
                 <span className="flex items-center gap-2">
-                  Contact Us
+                  Talk to Expert
                   <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none">
                     <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-              </button>
+              </a>
             </div>
 
             {/* ── Mobile hamburger ──────────────────────────────────────── */}
@@ -537,12 +538,15 @@ export function SiteHeader() {
             )}
 
             <div className="pt-4">
-              <button
-                onClick={() => { router.push("/contact"); setIsMobileOpen(false) }}
-                className="w-full bg-[#072448] text-white font-semibold py-3 rounded-xl hover:bg-[#0a2d5c] transition-colors"
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileOpen(false)}
+                className="block w-full text-center bg-[#072448] text-white font-semibold py-3 rounded-xl hover:bg-[#0a2d5c] transition-colors"
               >
-                Contact Us
-              </button>
+                Talk to Expert
+              </a>
             </div>
 
             {/* Language grid — mobile */}

@@ -1,15 +1,12 @@
 "use client"
 
 import {
-  PageCTAOutlineButton,
   PageCTAPrimaryButton,
   PageCTASection,
 } from "@/components/page-cta"
-import { useProposalModal } from "@/hooks/use-proposal-modal"
+import { TALK_TO_EXPERT_HREF } from "@/lib/proposal-cta"
 
 export function CtaSection() {
-  const { openProposalModal } = useProposalModal()
-
   return (
     <PageCTASection>
       <h2 className="type-heading mx-auto max-w-3xl text-balance font-bold text-white">
@@ -20,12 +17,9 @@ export function CtaSection() {
         engineering excellence and strategic growth.
       </p>
       <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <PageCTAPrimaryButton onClick={openProposalModal}>
-          Request a Proposal
+        <PageCTAPrimaryButton href={TALK_TO_EXPERT_HREF} target="_blank" rel="noopener noreferrer">
+          Talk to Expert
         </PageCTAPrimaryButton>
-        <PageCTAOutlineButton onClick={openProposalModal}>
-          Schedule a Consultation
-        </PageCTAOutlineButton>
       </div>
     </PageCTASection>
   )
