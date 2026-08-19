@@ -52,7 +52,7 @@ export default function CompanyCTA() {
         className="flex flex-wrap items-center justify-center gap-4"
       >
         <PageCTAPrimaryButton href={TALK_TO_EXPERT_HREF} target="_blank" rel="noopener noreferrer">
-          Talk to Expert
+          Talk To Our Experts
         </PageCTAPrimaryButton>
       </div>
     </PageCTASection>

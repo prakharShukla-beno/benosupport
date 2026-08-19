@@ -249,7 +249,7 @@ export function HeroSection() {
                 rel="noopener noreferrer"
                 className="h-[50px] px-8 rounded-xl border-[0.5px] border-white text-white text-[15px] font-semibold hover:bg-blue-900 transition-colors active:scale-[0.98] inline-flex items-center justify-center"
               >
-                Talk to an Expert
+                Talk To Our Experts
               </Link>
             </div>
           </div>

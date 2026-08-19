@@ -26,7 +26,7 @@ export default function CaseStudiesCTA() {
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <PageCTAPrimaryButton href={TALK_TO_EXPERT_HREF} target="_blank" rel="noopener noreferrer">
-          Talk to Expert
+          Talk To Our Experts
         </PageCTAPrimaryButton>
         <PageCTAOutlineButton href="/services">
           Explore Solutions

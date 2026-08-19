@@ -119,7 +119,7 @@ export default function Hero({
               rel="noopener noreferrer"
               className="rounded-lg bg-[#0A3A73] px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-[#124e96]"
             >
-              Talk to Expert
+              Talk To Our Experts
             </Link>
           </div>
         </div>

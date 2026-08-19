@@ -17,10 +17,6 @@ const slides = [
     src: "/assets/company/life_at_beno/life_at_beno_2_1.png",
     alt: "Life at Beno — office culture",
   },
-  {
-    src: "/assets/company/life_at_beno/life_at_beno_3_1.png",
-    alt: "Life at Beno — workspace",
-  },
 ]
 
 const SLIDE_INTERVAL_MS = 2000
