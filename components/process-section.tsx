@@ -200,6 +200,8 @@ export function ProcessSection({ processData }: ProcessSectionProps) {
     if (!cardRef.current) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
+
+    
     gsap.fromTo(
       cardRef.current,
       { opacity: 0.55, y: 12 },
