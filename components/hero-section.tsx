@@ -6,15 +6,36 @@ import { gsap } from "@/lib/gsap"
 import { PartnerStrip } from "./partnerStrip"
 import { TALK_TO_EXPERT_HREF } from "@/lib/proposal-cta"
 import { useProposalModal } from "@/hooks/use-proposal-modal"
+import type { HomeHeroData } from "@/sanity/lib/queries"
 
 // Pre-defined headline lines for clean stagger reveal (balanced length per line)
+// ── Used only as a FALLBACK if Sanity has no "Homepage Hero" content yet ──
 const HEADLINE_LINES = [
   "Innovating Tomorrow,",
   "Empowering Today— 15 Years",
   "of Depth. Now AI-Native.",
 ]
 
-export function HeroSection() {
+const DEFAULT_PARAGRAPH =
+  "Transforming businesses with cutting-edge technology and tailored solutions " +
+  "for the modern enterprise. We bridge the gap between legacy stability and " +
+  "future-ready intelligence."
+
+const DEFAULT_STATS = [
+  { label: "Projects Delivered", value: 500, suffix: "+" },
+  { label: "Client Retention Rate", value: 96, suffix: "%" },
+  { label: "Years of Experience", value: 15, suffix: "+" },
+]
+
+// Icons are matched to stat position (1st, 2nd, 3rd) — Sanity doesn't store icons
+const STAT_ICONS = [FileText, BadgeCheck, UserRoundCheck]
+const STAT_ICON_COLORS = ["text-[#10b981]", "text-[#f97316]", "text-[#3b82f6]"]
+
+type HeroSectionProps = {
+  heroData?: HomeHeroData
+}
+
+export function HeroSection({ heroData }: HeroSectionProps) {
    const { openProposalModal } = useProposalModal()
   const heroRef     = useRef<HTMLDivElement>(null)
   const videoRef    = useRef<HTMLVideoElement>(null)
@@ -24,24 +45,38 @@ export function HeroSection() {
   const paraRef     = useRef<HTMLParagraphElement>(null)
   const ctaRef      = useRef<HTMLDivElement>(null)
   const statsRef    = useRef<HTMLDivElement>(null)
-  const statNum1Ref = useRef<HTMLHeadingElement>(null)
-  const statNum2Ref = useRef<HTMLHeadingElement>(null)
-  const statNum3Ref = useRef<HTMLHeadingElement>(null)
+  const statNumRefs = useRef<(HTMLHeadingElement | null)[]>([])
+
+  // ── Resolve content: Sanity data if present, otherwise original hardcoded defaults ──
+  const headlineLines =
+    heroData?.headlineLines && heroData.headlineLines.length > 0
+      ? heroData.headlineLines
+      : HEADLINE_LINES
+
+  const paragraph = heroData?.paragraph || DEFAULT_PARAGRAPH
+  const primaryCtaLabel = heroData?.primaryCtaLabel || "Request a Proposal"
+  const secondaryCtaLabel = heroData?.secondaryCtaLabel || "Talk To Our Experts"
+  const videoSrc = heroData?.videoUrl || "/bgvedio.mp4"
+
+  const stats =
+    heroData?.stats && heroData.stats.length > 0
+      ? heroData.stats.slice(0, 3)
+      : DEFAULT_STATS
 
   // ── CINEMATIC LOAD SEQUENCE ──────────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       const lines  = lineRefs.current.filter(Boolean)
-      const stats  = statsRef.current ? Array.from(statsRef.current.children) : []
+      const statCards  = statsRef.current ? Array.from(statsRef.current.children) : []
 
       // Start everything hidden
-      gsap.set([lines, paraRef.current, ctaRef.current, stats], {
+      gsap.set([lines, paraRef.current, ctaRef.current, statCards], {
         opacity: 0,
       })
       gsap.set(lines, { yPercent: 110 })
       gsap.set(paraRef.current, { y: 28 })
       gsap.set(ctaRef.current, { scale: 0.7, y: 16 })
-      gsap.set(stats, {
+      gsap.set(statCards, {
         y: 70,
         scale: 0.82,
         rotateX: 14,
@@ -91,7 +126,7 @@ export function HeroSection() {
 
       // 6. Stat cards pop from depth with stagger
       tl.to(
-        stats,
+        statCards,
         {
           y: 0,
           scale: 1,
@@ -105,44 +140,28 @@ export function HeroSection() {
         1.05
       )
 
-      // 7. Count-up animations synced with each card's stagger offset
-      const c1 = { val: 0 }
-      const c2 = { val: 0 }
-      const c3 = { val: 0 }
-
-      tl.to(c1, {
-        val: 500,
-        duration: 1.4,
-        ease: "power2.out",
-        onUpdate: () => {
-          if (statNum1Ref.current)
-            statNum1Ref.current.textContent = Math.round(c1.val) + "+"
-        },
-      }, 1.05)
-
-      tl.to(c2, {
-        val: 96,
-        duration: 1.4,
-        ease: "power2.out",
-        onUpdate: () => {
-          if (statNum2Ref.current)
-            statNum2Ref.current.textContent = Math.round(c2.val) + "%"
-        },
-      }, 1.17)
-
-      tl.to(c3, {
-        val: 15,
-        duration: 1.4,
-        ease: "power2.out",
-        onUpdate: () => {
-          if (statNum3Ref.current)
-            statNum3Ref.current.textContent = Math.round(c3.val) + "+"
-        },
-      }, 1.29)
+      // 7. Count-up animations synced with each card's stagger offset, driven by `stats`
+      stats.forEach((stat, i) => {
+        const counter = { val: 0 }
+        const ref = statNumRefs.current[i]
+        const suffix = stat.suffix ?? ""
+        tl.to(
+          counter,
+          {
+            val: stat.value,
+            duration: 1.4,
+            ease: "power2.out",
+            onUpdate: () => {
+              if (ref) ref.textContent = Math.round(counter.val) + suffix
+            },
+          },
+          1.05 + i * 0.12
+        )
+      })
     }, heroRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [stats])
 
   // ── MOUSE PARALLAX ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -194,7 +213,7 @@ export function HeroSection() {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover z-0 will-change-transform"
-        src="/bgvedio.mp4"
+        src={videoSrc}
       />
 
       {/* Dark overlay */}
@@ -212,7 +231,7 @@ export function HeroSection() {
           <div className="flex flex-col justify-center">
             {/* Headline: each line wrapped in overflow-hidden clip container */}
             <h1 className="text-white font-extrabold leading-[1.22] tracking-[-2px] text-[38px] sm:text-[52px] md:text-[47px] lg:text-[52px] xl:text-[62px]">
-              {HEADLINE_LINES.map((line, i) => (
+              {headlineLines.map((line, i) => (
                 <span key={i} className="text-reveal-line">
                   <span
                     ref={(el) => { lineRefs.current[i] = el }}
@@ -228,9 +247,7 @@ export function HeroSection() {
               ref={paraRef}
               className="mt-6 type-body max-w-[560px] text-[#c8d4e3] will-change-transform"
             >
-              Transforming businesses with cutting-edge technology and tailored solutions
-              for the modern enterprise. We bridge the gap between legacy stability and
-              future-ready intelligence.
+              {paragraph}
             </p>
 
             {/* CTA */}
@@ -240,7 +257,7 @@ export function HeroSection() {
     onClick={openProposalModal}
     className="h-[50px] px-8 rounded-xl bg-[#0A3A73] text-white text-[15px] font-semibold hover:bg-blue-900 transition-colors active:scale-[0.98] inline-flex items-center justify-center"
   >
-    Request a Proposal
+    {primaryCtaLabel}
   </button>
 
   <a
@@ -249,7 +266,7 @@ export function HeroSection() {
     rel="noopener noreferrer"
     className="h-[50px] px-8 rounded-xl border border-white/30 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors active:scale-[0.98] inline-flex items-center justify-center"
   >
-    Talk To Our Experts
+    {secondaryCtaLabel}
   </a>
 </div>
           </div>
@@ -257,46 +274,31 @@ export function HeroSection() {
           {/* ─── RIGHT — compact stat cards ─── */}
           <div className="flex flex-col justify-end  mr-10 pb-6 lg:pb-10">
             <div ref={statsRef} className="flex flex-col gap-2.5">
-
-              {/* Projects Delivered */}
-              <div className="rounded-xl border border-white/10 bg-[#072448]/50 backdrop-blur-xl px-3.5 py-2.5 will-change-transform">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[#94a3b8] text-[11px] font-medium tracking-wide">Projects Delivered</p>
-                    <h3 ref={statNum1Ref} className="text-white text-[24px] font-bold leading-tight mt-0.5">0+</h3>
+              {stats.map((stat, i) => {
+                const Icon = STAT_ICONS[i] ?? FileText
+                const iconColor = STAT_ICON_COLORS[i] ?? "text-[#10b981]"
+                return (
+                  <div
+                    key={stat.label + i}
+                    className="rounded-xl border border-white/10 bg-[#072448]/50 backdrop-blur-xl px-3.5 py-2.5 will-change-transform"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[#94a3b8] text-[11px] font-medium tracking-wide">{stat.label}</p>
+                        <h3
+                          ref={(el) => { statNumRefs.current[i] = el }}
+                          className="text-white text-[24px] font-bold leading-tight mt-0.5"
+                        >
+                          0{stat.suffix ?? ""}
+                        </h3>
+                      </div>
+                      <div className="w-9 h-9 rounded-lg bg-[#072448]/80 flex items-center justify-center shrink-0">
+                        <Icon className={`w-4 h-4 ${iconColor}`} />
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-9 h-9 rounded-lg bg-[#072448]/80 flex items-center justify-center shrink-0">
-                    <FileText className="w-4 h-4 text-[#10b981]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Client Retention Rate */}
-              <div className="rounded-xl border border-white/10 bg-[#072448]/50 backdrop-blur-xl px-3.5 py-2.5 will-change-transform">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[#94a3b8] text-[11px] font-medium tracking-wide">Client Retention Rate</p>
-                    <h3 ref={statNum2Ref} className="text-white text-[24px] font-bold leading-tight mt-0.5">0%</h3>
-                  </div>
-                  <div className="w-9 h-9 rounded-lg bg-[#072448]/80 flex items-center justify-center shrink-0">
-                    <BadgeCheck className="w-4 h-4 text-[#f97316]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Years of Experience */}
-              <div className="rounded-xl border border-white/10 bg-[#072448]/50 backdrop-blur-xl px-3.5 py-2.5 will-change-transform">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[#94a3b8] text-[11px] font-medium tracking-wide">Years of Experience</p>
-                    <h3 ref={statNum3Ref} className="text-white text-[24px] font-bold leading-tight mt-0.5">0+</h3>
-                  </div>
-                  <div className="w-9 h-9 rounded-lg bg-[#072448]/80 flex items-center justify-center shrink-0">
-                    <UserRoundCheck className="w-4 h-4 text-[#3b82f6]" />
-                  </div>
-                </div>
-              </div>
-
+                )
+              })}
             </div>
           </div>
         </div>

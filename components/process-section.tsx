@@ -5,19 +5,29 @@ import Image from "next/image"
 import { ArrowRight, Check } from "lucide-react"
 
 import { gsap } from "@/lib/gsap"
+import { urlFor } from "@/sanity/lib/image"
+import type { ProcessSectionData } from "@/sanity/lib/queries"
 
-const PHASE_WORDS = [
-  "ASSESS",
-  "PLAN",
-  "ARCHITECT",
-  "BUILD",
-  "AUTOMATE",
-  "LAUNCH",
-  "OPTIMIZE",
-] as const
+// ── Used only as a FALLBACK if Sanity has no "Homepage Process Section" content yet ──
+const DEFAULT_LABEL = "Our Process"
+const DEFAULT_HEADING = "How We Make It Happen"
+const DEFAULT_DESCRIPTION =
+  "Our proven delivery framework combines people, processes, technology, and continuous improvement to deliver measurable business outcomes."
 
-const phases = [
+type ResolvedPhase = {
+  phaseWord: string
+  label: string
+  subtitle: string
+  title: string
+  description: string
+  points: string[]
+  image: string
+  imageAlt: string
+}
+
+const DEFAULT_PHASES: ResolvedPhase[] = [
   {
+    phaseWord: "ASSESS",
     label: "Our Approach",
     subtitle: "Foundational Discovery",
     title: "Understanding your business before building solutions.",
@@ -33,6 +43,7 @@ const phases = [
     imageAlt: "Beno Support team collaborating during discovery workshop",
   },
   {
+    phaseWord: "PLAN",
     label: "Process Management",
     subtitle: "Structured Execution",
     title: "Structured execution with complete visibility.",
@@ -48,10 +59,10 @@ const phases = [
     imageAlt: "Project leads reviewing execution dashboards and timelines",
   },
   {
+    phaseWord: "ARCHITECT",
     label: "Quality Assurance",
     subtitle: "Lifecycle Consistency",
-    title:
-      "Delivering consistent quality throughout the project lifecycle.",
+    title: "Delivering consistent quality throughout the project lifecycle.",
     description:
       "Rigorous audits, continuous feedback loops, and proactive process improvement ensure that quality is engineered into every stage of delivery.",
     points: [
@@ -64,10 +75,10 @@ const phases = [
     imageAlt: "Engineers conducting quality reviews on delivery work",
   },
   {
+    phaseWord: "BUILD",
     label: "Technology Enablement",
     subtitle: "Modern Engineering",
-    title:
-      "Building delivery with modern engineering practices.",
+    title: "Building delivery with modern engineering practices.",
     description:
       "We embed the right tools, platforms, and automation into your delivery model so teams can scale without sacrificing precision or speed.",
     points: [
@@ -80,10 +91,10 @@ const phases = [
     imageAlt: "Engineering team enabling modern delivery systems",
   },
   {
+    phaseWord: "AUTOMATE",
     label: "Key Success Factors",
     subtitle: "Engagement Principles",
-    title:
-      "The principles behind every successful engagement.",
+    title: "The principles behind every successful engagement.",
     description:
       "Successful delivery is built on transparent communication, flexible engagement models, and an uncompromising focus on time, cost, and quality.",
     points: [
@@ -96,6 +107,7 @@ const phases = [
     imageAlt: "Leaders aligning on engagement success principles",
   },
   {
+    phaseWord: "LAUNCH",
     label: "Client Commitment",
     subtitle: "Long-Term Success",
     title: "Focused on long-term customer success.",
@@ -111,10 +123,10 @@ const phases = [
     imageAlt: "Client success teams supporting long-term partnership goals",
   },
   {
+    phaseWord: "OPTIMIZE",
     label: "Continuous Excellence",
     subtitle: "Ongoing Improvement",
-    title:
-      "Improving delivery through proven methodologies.",
+    title: "Improving delivery through proven methodologies.",
     description:
       "Our culture of continuous improvement leverages Lean Six Sigma, Kaizen principles, and customer-centric delivery to raise the bar over time.",
     points: [
@@ -128,7 +140,30 @@ const phases = [
   },
 ]
 
-export function ProcessSection() {
+type ProcessSectionProps = {
+  processData?: ProcessSectionData
+}
+
+export function ProcessSection({ processData }: ProcessSectionProps) {
+  const label = processData?.sectionLabel || DEFAULT_LABEL
+  const heading = processData?.heading || DEFAULT_HEADING
+  const description = processData?.description || DEFAULT_DESCRIPTION
+
+  // Resolve phases: Sanity data (with image URLs built via urlFor) if present, else original hardcoded defaults.
+  const phases: ResolvedPhase[] =
+    processData?.phases && processData.phases.length > 0
+      ? processData.phases.map((p) => ({
+          phaseWord: p.phaseWord,
+          label: p.label,
+          subtitle: p.subtitle,
+          title: p.title,
+          description: p.description,
+          points: p.points,
+          image: p.image ? urlFor(p.image).width(640).height(640).fit("crop").url() : "",
+          imageAlt: p.imageAlt || p.label,
+        }))
+      : DEFAULT_PHASES
+
   const [activeIndex, setActiveIndex] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
@@ -137,8 +172,11 @@ export function ProcessSection() {
   const stepLineRef = useRef<HTMLDivElement>(null)
   const stepIconRefs = useRef<(HTMLSpanElement | null)[]>([])
 
-  const active = phases[activeIndex]
-  const isLast = activeIndex === phases.length - 1
+  // Guard against activeIndex being out of range if phases length changes (e.g. content edited)
+  const safeIndex = Math.min(activeIndex, phases.length - 1)
+  const active = phases[safeIndex]
+  const isLast = safeIndex === phases.length - 1
+  const totalLabel = String(phases.length).padStart(2, "0")
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -167,7 +205,7 @@ export function ProcessSection() {
       { opacity: 0.55, y: 12 },
       { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
     )
-  }, [activeIndex])
+  }, [safeIndex])
 
   useEffect(() => {
     function updateStepLine() {
@@ -191,7 +229,7 @@ export function ProcessSection() {
     updateStepLine()
     window.addEventListener("resize", updateStepLine)
     return () => window.removeEventListener("resize", updateStepLine)
-  }, [activeIndex])
+  }, [safeIndex, phases.length])
 
   function goToNextPhase() {
     setActiveIndex((index) => (index + 1) % phases.length)
@@ -205,15 +243,13 @@ export function ProcessSection() {
       <div className="mx-auto max-w-[1340px] px-6 lg:px-12">
         <div ref={headingRef} className="mb-10 lg:mb-14">
           <span className="type-label mb-3 block font-semibold section-label-light">
-            Our Process
+            {label}
           </span>
           <h2 className="type-heading mb-4 text-[#072448]">
-            How We Make It Happen
+            {heading}
           </h2>
           <p className="type-body max-w-[640px] text-[#4b5a72]">
-            Our proven delivery framework combines people, processes,
-            technology, and continuous improvement to deliver measurable
-            business outcomes.
+            {description}
           </p>
         </div>
 
@@ -231,7 +267,7 @@ export function ProcessSection() {
             />
             <ol className="relative space-y-1 lg:flex lg:h-full lg:w-full lg:flex-col lg:justify-between lg:space-y-0 lg:py-1">
               {phases.map((phase, index) => {
-                const isActive = index === activeIndex
+                const isActive = index === safeIndex
                 const number = String(index + 1).padStart(2, "0")
 
                 return (
@@ -293,10 +329,10 @@ export function ProcessSection() {
           >
             <div className="flex items-center gap-3 text-[11px] font-semibold tracking-[0.14em] text-[#64748b]">
               <span className="inline-flex size-7 items-center justify-center rounded-md border border-[#d7e0ee] bg-[#f8fafc] text-[11px] text-[#072448]">
-                {String(activeIndex + 1).padStart(2, "0")}
+                {String(safeIndex + 1).padStart(2, "0")}
               </span>
               <span className="h-px w-6 bg-[#cbd5e1]" aria-hidden />
-              <span>{PHASE_WORDS[activeIndex]}</span>
+              <span>{active.phaseWord}</span>
             </div>
 
             <div className="mt-5 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
@@ -324,19 +360,21 @@ export function ProcessSection() {
               </div>
 
               <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-2xl bg-[#e8edf3] lg:mx-0 lg:max-w-none">
-                {phases.map((phase, index) => (
-                  <Image
-                    key={phase.image}
-                    src={phase.image}
-                    alt={phase.imageAlt}
-                    fill
-                    priority={index === 0}
-                    sizes="(max-width: 1024px) 280px, 320px"
-                    className={`object-cover object-center transition-opacity duration-300 ease-out ${
-                      index === activeIndex ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                ))}
+                {phases.map((phase, index) =>
+                  phase.image ? (
+                    <Image
+                      key={phase.image + index}
+                      src={phase.image}
+                      alt={phase.imageAlt}
+                      fill
+                      priority={index === 0}
+                      sizes="(max-width: 1024px) 280px, 320px"
+                      className={`object-cover object-center transition-opacity duration-300 ease-out ${
+                        index === safeIndex ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                  ) : null
+                )}
               </div>
             </div>
 
@@ -350,7 +388,7 @@ export function ProcessSection() {
                 <ArrowRight className="size-4" aria-hidden />
               </button>
               <span className="text-xs font-medium text-[#94a3b8]">
-                {String(activeIndex + 1).padStart(2, "0")} / 07
+                {String(safeIndex + 1).padStart(2, "0")} / {totalLabel}
               </span>
             </div>
           </div>

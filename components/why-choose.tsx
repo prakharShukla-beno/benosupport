@@ -1,9 +1,10 @@
 "use client"
 
 import { useRef, useEffect, useState } from "react"
-import { Globe2, Layers, TrendingUp, Clock, ShieldCheck, Cpu, ChevronDown, ChevronUp } from "lucide-react"
+import { Globe2, Layers, TrendingUp, Clock, ShieldCheck, Cpu, ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import type { WhyChooseSectionData } from "@/sanity/lib/queries"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -11,10 +12,15 @@ type Reason = {
   icon: React.ElementType
   title: string
   description: string
-  highlight?: boolean
 }
 
-const reasons: Reason[] = [
+// ── Used only as a FALLBACK if Sanity has no "Homepage Why Choose Us" content yet ──
+const DEFAULT_LABEL = "Why Choose Us"
+const DEFAULT_HEADING = "Why Choose Beno Support"
+const DEFAULT_SUBTITLE =
+  "Combining over 15 years of deep technical engineering expertise with AI-native operational execution to deliver secure, scalable, and compliant global solutions."
+
+const DEFAULT_REASONS: Reason[] = [
   {
     icon: Globe2,
     title: "Multi-Centre Global Delivery",
@@ -30,7 +36,6 @@ const reasons: Reason[] = [
   {
     icon: TrendingUp,
     title: "200% Growth in 3 Years",
-    highlight: true,
     description:
       "Sustained, hyper-scale market expansion powered directly by exceptional client retention, predictable delivery quality, and high-impact digital engineering worldwide.",
   },
@@ -53,6 +58,17 @@ const reasons: Reason[] = [
       "AI-assisted delivery, workflow accuracy embedded into core practices — cloud architecture, software engineering, and cybersecurity — for maximum speed and accuracy.",
   },
 ]
+
+// Maps the icon name string (chosen in Sanity Studio) back to the actual icon component.
+// Keep this in sync with ICON_OPTIONS in sanity/schemaTypes/whyChooseSectionType.ts
+const ICON_MAP: Record<string, LucideIcon> = {
+  Globe2,
+  Layers,
+  TrendingUp,
+  Clock,
+  ShieldCheck,
+  Cpu,
+}
 
 // ─── reusable card renderer ───────────────────────────────────────────────────
 function ReasonCard({
@@ -94,16 +110,12 @@ export function WhyChoose({
   visibleCount = 3,       // how many cards to show before "Show More"
   cols = 3,              // grid columns
   moreLabel = "See All Reasons",
-  sectionLabel = "Why Choose Us",
-  title = "Why Choose Beno Support",
-  subtitle = "Combining over 15 years of deep technical engineering expertise with AI-native operational execution to deliver secure, scalable, and compliant global solutions.",
+  whyChooseData,
 }: {
   visibleCount?: number
   cols?: number
   moreLabel?: string
-  sectionLabel?: string
-  title?: string
-  subtitle?: string
+  whyChooseData?: WhyChooseSectionData
 }) {
   const sectionRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
@@ -111,6 +123,20 @@ export function WhyChoose({
   const extraRef = useRef<HTMLDivElement>(null)
 
   const [expanded, setExpanded] = useState(false)
+
+  const sectionLabel = whyChooseData?.sectionLabel || DEFAULT_LABEL
+  const title = whyChooseData?.heading || DEFAULT_HEADING
+  const subtitle = whyChooseData?.subtitle || DEFAULT_SUBTITLE
+
+  // Resolve reasons: Sanity data (icon name -> component) if present, else original hardcoded list.
+  const reasons: Reason[] =
+    whyChooseData?.reasons && whyChooseData.reasons.length > 0
+      ? whyChooseData.reasons.map((r) => ({
+          icon: ICON_MAP[r.icon] ?? Globe2,
+          title: r.title,
+          description: r.description,
+        }))
+      : DEFAULT_REASONS
 
   const visibleCards = reasons.slice(0, visibleCount)
   const hiddenCards = reasons.slice(visibleCount)

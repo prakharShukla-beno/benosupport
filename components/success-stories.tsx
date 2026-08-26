@@ -3,24 +3,39 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 import { CASE_STUDY_LISTINGS } from "@/lib/case-studies-data"
+import type { SuccessStoriesSectionData } from "@/sanity/lib/queries"
 
 const HOME_CASE_STUDIES = CASE_STUDY_LISTINGS.slice(0, 2)
 
-export function SuccessStories() {
+// ── Used only as a FALLBACK if Sanity has no "Homepage Success Stories" content yet ──
+// Note: only the heading text is editable here. The 2 case study cards below still
+// come from lib/case-studies-data.ts — that will be migrated separately.
+const DEFAULT_LABEL = "Case Studies"
+const DEFAULT_HEADING = "Success Stories"
+const DEFAULT_DESCRIPTION =
+  "Explore how Beno Support helps businesses accelerate innovation, optimize operations, modernize infrastructure, and achieve measurable digital transformation outcomes."
+
+type SuccessStoriesProps = {
+  successStoriesData?: SuccessStoriesSectionData
+}
+
+export function SuccessStories({ successStoriesData }: SuccessStoriesProps) {
+  const label = successStoriesData?.sectionLabel || DEFAULT_LABEL
+  const heading = successStoriesData?.heading || DEFAULT_HEADING
+  const description = successStoriesData?.description || DEFAULT_DESCRIPTION
+
   return (
     <section className="bg-muted py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <span className="type-label font-semibold section-label-light">
-            Case Studies
+            {label}
           </span>
           <h2 className="mt-2 text-balance type-heading font-bold text-primary">
-            Success Stories
+            {heading}
           </h2>
           <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-secondary">
-            Explore how Beno Support helps businesses accelerate innovation,
-            optimize operations, modernize infrastructure, and achieve
-            measurable digital transformation outcomes.
+            {description}
           </p>
         </div>
 
