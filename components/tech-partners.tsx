@@ -53,4 +53,5 @@ export function TechPartners() {
       </div>
     </section>
   )
+
 }
