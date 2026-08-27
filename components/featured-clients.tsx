@@ -2,14 +2,6 @@
 
 import { useEffect, useRef } from "react"
 import { gsap, ScrollTrigger } from "@/lib/gsap"
-import { urlFor } from "@/sanity/lib/image"
-import type { FeaturedClientsSectionData, FeaturedClientRow } from "@/sanity/lib/queries"
-
-// ── Used only as a FALLBACK if Sanity has no "Homepage Featured Clients" content yet ──
-const DEFAULT_LABEL = "Our Clients"
-const DEFAULT_HEADING = "OUR FEATURED CLIENTS"
-const DEFAULT_DESCRIPTION =
-  "We collaborate with startups, growing businesses, enterprises, and public sector organizations worldwide to deliver AI-driven innovation, scalable digital platforms, cloud transformation, and enterprise technology solutions."
 
 const government = [
   { name: "Indian Air Force",  logo: "/assets/publicimg/govt/airforce.svg" },
@@ -61,13 +53,6 @@ const healthcare = [
   { name: "Prakash Hospital",  logo: "/assets/publicimg/healthcare/cure_with_care.svg" },
 ]
 
-const DEFAULT_ROWS: { label: string; items: { name: string; logo: string | null }[]; speed: number; reverse?: boolean; tall?: boolean }[] = [
-  { label: "Government",  items: government,  speed: 44, tall: true },
-  { label: "Technology",  items: technology,  speed: 55, reverse: true },
-  { label: "Fintech",     items: fintech,     speed: 40 },
-  { label: "Healthcare",  items: healthcare,  speed: 28 },
-]
-
 const brandColors: Record<string, string> = {
   "Damco": "#e63224", "NTT Data": "#003087", "infodart": "#0078d7",
   "Bit studios": "#1a1a1a", "Algoworks": "#e84343",
@@ -77,17 +62,6 @@ const brandColors: Record<string, string> = {
 
 // Repeat items enough times so the track is always wider than any viewport
 const REPS = 7
-
-// Default speed/reverse/tall per row position, used when rendering Sanity-driven
-// rows that don't specify their own animation config (schema doesn't expose it,
-// to keep the Studio form simple — this keeps the original visual rhythm).
-function rowConfigForIndex(i: number): { speed: number; reverse?: boolean; tall?: boolean } {
-  if (i === 0) return { speed: 44, tall: true }
-  if (i === 1) return { speed: 55, reverse: true }
-  if (i === 2) return { speed: 40 }
-  if (i === 3) return { speed: 28 }
-  return { speed: 45, reverse: i % 2 === 1 }
-}
 
 // ─── ClientCard ───────────────────────────────────────────────────────────────
 function ClientCard({
@@ -234,27 +208,8 @@ function MarqueeRow({
   )
 }
 
-// Converts Sanity rows into the { label, items, speed, reverse, tall } shape MarqueeRow needs.
-function resolveSanityRows(rows: FeaturedClientRow[]) {
-  return rows.map((row, i) => {
-    const config = rowConfigForIndex(i)
-    return {
-      label: row.rowLabel,
-      items: row.clients.map((c) => ({
-        name: c.name,
-        logo: c.logo ? urlFor(c.logo).width(410).height(122).fit("max").url() : null,
-      })),
-      ...config,
-    }
-  })
-}
-
 // ─── FeaturedClients ──────────────────────────────────────────────────────────
-type FeaturedClientsProps = {
-  featuredClientsData?: FeaturedClientsSectionData
-}
-
-export function FeaturedClients({ featuredClientsData }: FeaturedClientsProps) {
+export function FeaturedClients() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
 
@@ -272,21 +227,6 @@ export function FeaturedClients({ featuredClientsData }: FeaturedClientsProps) {
     return () => ctx.revert()
   }, [])
 
-  const label = featuredClientsData?.sectionLabel || DEFAULT_LABEL
-  const heading = featuredClientsData?.heading || DEFAULT_HEADING
-  const description = featuredClientsData?.description || DEFAULT_DESCRIPTION
-
-  const rows =
-    featuredClientsData?.rows && featuredClientsData.rows.length > 0
-      ? resolveSanityRows(featuredClientsData.rows)
-      : DEFAULT_ROWS.map((r) => ({ label: r.label, items: r.items, speed: r.speed, reverse: r.reverse, tall: r.tall }))
-
-  // Preserve the original special layout (first 2 rows full-width, last 2 in a
-  // 2-column grid) only when there are exactly 4 rows — matching the default design.
-  // Any other row count (if someone adds/removes a row in Sanity) falls back to
-  // simply stacking every row full-width, which still looks fine, just simpler.
-  const useSpecialLayout = rows.length === 4
-
   return (
     <section ref={sectionRef} className="bg-white overflow-hidden py-12 sm:py-16 lg:py-20">
       <div className="max-w-[1300px] mx-auto px-6 lg:px-12">
@@ -294,37 +234,30 @@ export function FeaturedClients({ featuredClientsData }: FeaturedClientsProps) {
         {/* Header */}
         <div ref={headingRef} className="mb-12 lg:mb-16">
           <span className="type-label font-semibold section-label-light mb-3 block">
-            {label}
+            Our Clients
           </span>
           <h2 className="text-[30px] sm:text-[38px] lg:text-[46px] font-extrabold text-[#0d1e3c] leading-[1.1] tracking-[-1px] mb-4">
-            {heading}
+            OUR FEATURED CLIENTS
           </h2>
           <p className="text-[#4b5a72] text-[15px] sm:text-[16px] leading-[1.8] max-w-[700px]">
-            {description}
+            We collaborate with startups, growing businesses, enterprises, and public sector organizations worldwide to
+            deliver AI-driven innovation, scalable digital platforms, cloud transformation, and enterprise technology solutions.
           </p>
         </div>
 
-        {/* Marquee strips — alternating direction for visual richness */}
-        {useSpecialLayout ? (
-          <div className="space-y-10 lg:space-y-14">
-            <MarqueeRow label={rows[0].label} items={rows[0].items} speed={rows[0].speed} tall={rows[0].tall} reverse={rows[0].reverse} />
-            <MarqueeRow label={rows[1].label} items={rows[1].items} speed={rows[1].speed} tall={rows[1].tall} reverse={rows[1].reverse} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 min-w-0">
-              <div className="min-w-0 overflow-hidden">
-                <MarqueeRow label={rows[2].label} items={rows[2].items} speed={rows[2].speed} tall={rows[2].tall} reverse={rows[2].reverse} />
-              </div>
-              <div className="min-w-0 overflow-hidden">
-                <MarqueeRow label={rows[3].label} items={rows[3].items} speed={rows[3].speed} tall={rows[3].tall} reverse={rows[3].reverse} />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-10 lg:space-y-14">
-            {rows.map((row) => (
-              <MarqueeRow key={row.label} label={row.label} items={row.items} speed={row.speed} tall={row.tall} reverse={row.reverse} />
-            ))}
-          </div>
-        )}
+        {/* Four labelled marquee strips — alternating direction for visual richness */}
+        <div className="space-y-10 lg:space-y-14">
+          <MarqueeRow label="Government"  items={government}  speed={44} tall         />
+          <MarqueeRow label="Technology"  items={technology}  speed={55} reverse      />
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 min-w-0">
+           <div className="min-w-0 overflow-hidden">
+             <MarqueeRow label="Fintech"    items={fintech}    speed={40}         />
+           </div>
+           <div className="min-w-0 overflow-hidden">
+             <MarqueeRow label="Healthcare" items={healthcare} speed={28}  />
+           </div>
+         </div>
+        </div>
 
       </div>
     </section>

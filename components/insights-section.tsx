@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays } from "lucide-react"
 
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
-import { ALL_POSTS_QUERY, type PostListItem, type InsightsSectionData } from "@/sanity/lib/queries"
+import { ALL_POSTS_QUERY, type PostListItem } from "@/sanity/lib/queries"
 
 function formatDate(date?: string) {
   if (!date) return null
@@ -15,19 +15,7 @@ function formatDate(date?: string) {
   }).format(new Date(date))
 }
 
-// ── Used only as a FALLBACK if Sanity has no "Homepage Insights" heading content yet ──
-// Note: only the heading text is editable here. The 3 blog cards below already come
-// from Posts (Sanity Blog), which was already CMS-driven before this change.
-const DEFAULT_LABEL = "Blog & Resources"
-const DEFAULT_HEADING = "AI, Engineering & Technology Insights"
-const DEFAULT_DESCRIPTION =
-  "Explore expert perspectives on the future of AI transformation and engineering best practices."
-
-type InsightsSectionProps = {
-  insightsData?: InsightsSectionData
-}
-
-export async function InsightsSection({ insightsData }: InsightsSectionProps) {
+export async function InsightsSection() {
   let posts: PostListItem[] = []
 
   try {
@@ -39,22 +27,19 @@ export async function InsightsSection({ insightsData }: InsightsSectionProps) {
 
   if (posts.length === 0) return null
 
-  const label = insightsData?.sectionLabel || DEFAULT_LABEL
-  const heading = insightsData?.heading || DEFAULT_HEADING
-  const description = insightsData?.description || DEFAULT_DESCRIPTION
-
   return (
     <section className="bg-background py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <span className="type-label font-semibold section-label-light">
-            {label}
+            Blog &amp; Resources
           </span>
           <h2 className="mt-2 text-balance type-heading font-bold text-primary">
-            {heading}
+            AI, Engineering &amp; Technology Insights
           </h2>
           <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-secondary">
-            {description}
+            Explore expert perspectives on the future of AI transformation and
+            engineering best practices.
           </p>
         </div>
 

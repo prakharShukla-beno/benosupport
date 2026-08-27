@@ -4,16 +4,10 @@ import type {StructureResolver} from 'sanity/structure'
 // When you add a new homepage section schema later, add its `name` here too.
 const HOMEPAGE_SECTION_TYPES = [
   'homeHero',
-  'industriesSection',
-  'successStoriesSection',
-  'insightsSection',
-  'faqSection',
-  'ctaSection',
-  'techPartnersSection',
-  'techStackSection',
-  'featuredClientsSection',
   'whyChooseSection',
   'processSection',
+  'faqSection',
+  'ctaSection',
 ]
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
@@ -24,7 +18,7 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('post').title('Posts'),
       S.divider(),
 
-      // ── Homepage folder — every homepage section lives inside here ──────
+      // ── Homepage folder — every editable homepage section lives inside here ──
       S.listItem()
         .title('Homepage')
         .child(
@@ -32,16 +26,10 @@ export const structure: StructureResolver = (S) =>
             .title('Homepage Sections')
             .items([
               S.documentTypeListItem('homeHero').title('Hero'),
-              S.documentTypeListItem('industriesSection').title('Industries'),
-              S.documentTypeListItem('successStoriesSection').title('Success Stories'),
-              S.documentTypeListItem('insightsSection').title('Insights'),
-              S.documentTypeListItem('faqSection').title('FAQ'),
-              S.documentTypeListItem('ctaSection').title('Bottom CTA'),
-              S.documentTypeListItem('techPartnersSection').title('Tech Partners'),
-              S.documentTypeListItem('techStackSection').title('Tech Stack'),
-              S.documentTypeListItem('featuredClientsSection').title('Featured Clients'),
               S.documentTypeListItem('whyChooseSection').title('Why Choose Us'),
               S.documentTypeListItem('processSection').title('Process Section'),
+              S.documentTypeListItem('faqSection').title('FAQ'),
+              S.documentTypeListItem('ctaSection').title('Bottom CTA'),
             ]),
         ),
 
