@@ -3,91 +3,69 @@
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "@/lib/gsap"
 import { cn } from "@/lib/utils"
-import { urlFor } from "@/sanity/lib/image"
-import type { TechStackSectionData, TechStackItem } from "@/sanity/lib/queries"
 
-// ── Used only as a FALLBACK if Sanity has no "Homepage Tech Stack" content yet ──
-const DEFAULT_LABEL = "Technology Stack"
-const DEFAULT_HEADING = "Our Technology & Tool Stack"
-const DEFAULT_DESCRIPTION =
-  "Industry-leading platforms driving innovation, performance, and long-term security."
+const tabs = ["Front-end", "Back-end", "Database", "Cloud-Hosting", "Testing", "Artificial Intelligence"]
 
-const DEFAULT_TABS = ["Front-end", "Back-end", "Database", "Cloud-Hosting", "Testing", "Artificial Intelligence"]
+type TechItem = {
+  name: string
+  icon: string
+  invertIcon?: boolean
+}
 
-const DEFAULT_TECH_DATA: Record<string, TechStackItem[]> = {
+const techData: Record<string, TechItem[]> = {
   "Front-end": [
-    { name: "React.js",     iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
-    { name: "Angular",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" },
-    { name: "Vue.js",       iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" },
-    { name: "Next.js",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
-    { name: "Nuxt.js",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg" },
-    { name: "TypeScript",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
-    { name: "JavaScript",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-    { name: "HTML5",        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
-    { name: "Tailwind CSS", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
-    { name: "Bootstrap",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" },
+    { name: "React.js",     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+    { name: "Angular",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" },
+    { name: "Vue.js",       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" },
+    { name: "Next.js",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
+    { name: "Nuxt.js",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg" },
+    { name: "TypeScript",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+    { name: "JavaScript",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+    { name: "HTML5",        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
+    { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
+    { name: "Bootstrap",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" },
   ],
   "Back-end": [
-    { name: "Node.js",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-    { name: "Python",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-    { name: "Laravel",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" },
-    { name: "java",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" },
-    { name: "NestJS",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg" },
+    { name: "Node.js",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+    { name: "Python",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+    { name: "Laravel",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" },
+    {name:"java",icon:"https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"},
+    // { name: "Django",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" },
+    // { name: "Express",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" },
+    { name: "NestJS",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg" },
   ],
   "Database": [
-    { name: "PostgreSQL", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" },
-    { name: "MongoDB",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
-    { name: "MySQL",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
-    { name: "Redis",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
-    { name: "Firebase",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" },
+    { name: "PostgreSQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" },
+    { name: "MongoDB",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
+    { name: "MySQL",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
+    { name: "Redis",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" },
+    { name: "Firebase",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" },
   ],
   "Cloud-Hosting": [
-    { name: "AWS",          iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", invertIcon: true },
-    { name: "Azure",        iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" },
-    { name: "Google Cloud", iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" },
-    { name: "Docker",       iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
-    { name: "Kubernetes",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" },
+    { name: "AWS",          icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg", invertIcon: true },
+    { name: "Azure",        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" },
+    { name: "Google Cloud", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" },
+    { name: "Docker",       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" },
+    { name: "Kubernetes",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" },
   ],
   "Testing": [
-    { name: "Jest",       iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg" },
-    { name: "Cypress",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cypressio/cypressio-original.svg" },
-    { name: "Selenium",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/selenium/selenium-original.svg" },
-    { name: "Playwright", iconUrl: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/playwright.svg", invertIcon: true },
-    { name: "Postman",    iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg" },
+    { name: "Jest",       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg" },
+    { name: "Cypress",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cypressio/cypressio-original.svg" },
+    { name: "Selenium",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/selenium/selenium-original.svg" },
+    { name: "Playwright", icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/playwright.svg", invertIcon: true },
+    { name: "Postman",    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg" },
   ],
   "Artificial Intelligence": [
-    { name: "OpenAI",       iconUrl: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/openai.svg", invertIcon: true },
-    { name: "TensorFlow",   iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" },
-    { name: "PyTorch",      iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" },
-    { name: "LangChain",    iconUrl: "https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/langchain.svg", invertIcon: true },
-    { name: "Hugging Face", iconUrl: "https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/huggingface.svg", invertIcon: true },
+    { name: "OpenAI",       icon: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/openai.svg", invertIcon: true },
+    { name: "TensorFlow",   icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" },
+    { name: "PyTorch",      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" },
+    { name: "LangChain",    icon: "https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/langchain.svg", invertIcon: true },
+    { name: "Hugging Face", icon: "https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/huggingface.svg", invertIcon: true },
   ],
 }
 
-const getIconSrc = (tech: TechStackItem): string | undefined => {
-  if (tech.iconImage) return urlFor(tech.iconImage).width(100).height(100).fit("max").url()
-  return tech.iconUrl
-}
-
-type TechStackProps = {
-  techStackData?: TechStackSectionData
-}
-
-export function TechStack({ techStackData }: TechStackProps) {
-  const label = techStackData?.sectionLabel || DEFAULT_LABEL
-  const heading = techStackData?.heading || DEFAULT_HEADING
-  const description = techStackData?.description || DEFAULT_DESCRIPTION
-
-  // Build { tabs, techData } either from Sanity categories, or from the original hardcoded defaults.
-  const hasSanityData = techStackData?.categories && techStackData.categories.length > 0
-  const tabs = hasSanityData
-    ? techStackData!.categories!.map((c) => c.tabName)
-    : DEFAULT_TABS
-  const techData: Record<string, TechStackItem[]> = hasSanityData
-    ? Object.fromEntries(techStackData!.categories!.map((c) => [c.tabName, c.items]))
-    : DEFAULT_TECH_DATA
-
-  const [active, setActive] = useState(tabs[0])
+export function TechStack() {
+  const [active, setActive] = useState("Front-end")
   const sectionRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
   const tabsRef    = useRef<HTMLDivElement>(null)
@@ -139,13 +117,13 @@ export function TechStack({ techStackData }: TechStackProps) {
         {/* ── Header ──────────────────────────────────────────────────────── */}
         <div ref={headingRef} className="mb-10 lg:mb-14">
           <span className="type-label font-semibold section-label-light mb-3 block">
-            {label}
+            Technology Stack
           </span>
           <h2 className="mt-1 text-balance type-heading font-bold text-primary">
-            {heading}
+            Our Technology &amp; Tool Stack
           </h2>
           <p className="mt-3 max-w-2xl text-pretty type-body leading-relaxed text-secondary">
-            {description}
+            Industry-leading platforms driving innovation, performance, and long-term security.
           </p>
         </div>
 
@@ -226,7 +204,7 @@ export function TechStack({ techStackData }: TechStackProps) {
                   }}
                 />
                 <img
-                  src={getIconSrc(tech)}
+                  src={tech.icon}
                   alt={tech.name}
                   width={46}
                   height={46}
@@ -234,6 +212,7 @@ export function TechStack({ techStackData }: TechStackProps) {
                     "relative w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] object-contain",
                     tech.invertIcon && "brightness-0 invert"
                   )}
+                  
                   onError={(e) => {
                     ;(e.target as HTMLImageElement).style.opacity = "0"
                   }}
