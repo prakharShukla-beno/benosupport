@@ -1,13 +1,13 @@
 import Link from "next/link"
-import { servicesData } from "@/lib/services-data"
+import { getServiceListingSummaries } from "@/sanity/lib/services"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { withHome } from "@/lib/breadcrumbs"
 
-const items = Object.entries(servicesData).map(([slug, service]) => ({ slug, title: service.meta.title, description: service.meta.description }))
+export default async function ServicesPage() {
+  const items = await getServiceListingSummaries()
 
-export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />

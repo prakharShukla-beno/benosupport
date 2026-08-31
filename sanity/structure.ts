@@ -10,6 +10,9 @@ const HOMEPAGE_SECTION_TYPES = [
   'ctaSection',
 ]
 
+// Document types organized into the "Services" folder below.
+const SERVICES_TYPES = ['service']
+
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -33,12 +36,19 @@ export const structure: StructureResolver = (S) =>
             ]),
         ),
 
+      // ── Services folder — one entry per service page ──
+      S.listItem()
+        .title('Services')
+        .child(
+          S.documentTypeList('service').title('Services'),
+        ),
+
       S.divider(),
 
       // Anything else (future document types not yet organized into a folder)
       // still shows up here automatically, so nothing ever goes missing.
       ...S.documentTypeListItems().filter((item) => {
         const id = item.getId()
-        return id && id !== 'post' && !HOMEPAGE_SECTION_TYPES.includes(id)
+        return id && id !== 'post' && !HOMEPAGE_SECTION_TYPES.includes(id) && !SERVICES_TYPES.includes(id)
       }),
     ])
