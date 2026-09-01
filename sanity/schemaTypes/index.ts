@@ -12,4 +12,3 @@ import {serviceType} from './serviceType'
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [blockContentType, postType, homeHeroType, faqSectionType, ctaSectionType, whyChooseSectionType, processSectionType, serviceType],
 }
-
