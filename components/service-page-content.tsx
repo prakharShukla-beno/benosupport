@@ -14,7 +14,7 @@ import {
   GraduationCap, UserCheck, Heart, BookOpen,
   ArrowRight, Star, ChevronDown,
   Landmark, ShieldCheck, HeartPulse, Plane, Building, ShoppingCart, Radio, Gamepad2,
-  ChevronUp,
+  ChevronUp, Briefcase, Workflow,
 } from "lucide-react"
 import { gsap } from "@/lib/gsap"
 import type { CapabilityCard, ServiceData, ServiceUseCase } from "@/lib/services-data"
@@ -39,6 +39,7 @@ const iconMap: Record<string, ComponentType<{ className?: string }>> = {
   PieChart, Clock, DollarSign,
   Cloud, Network, GitMerge,
   GraduationCap, UserCheck, Heart, BookOpen,
+  Briefcase, ShieldCheck, Workflow,
 }
 
 // ---------------------------------------------------------------------------

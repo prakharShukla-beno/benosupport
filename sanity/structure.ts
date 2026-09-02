@@ -1,4 +1,5 @@
 import type {StructureResolver} from 'sanity/structure'
+import {SERVICE_NAV_ITEMS} from '@/lib/site-navigation'
 
 // List of document type names that live inside the "Homepage" folder below.
 // When you add a new homepage section schema later, add its `name` here too.
@@ -12,6 +13,14 @@ const HOMEPAGE_SECTION_TYPES = [
 
 // Document types organized into the "Services" folder below.
 const SERVICES_TYPES = ['service']
+
+// The 8 services, in the same order they appear in the site's navigation —
+// so the numbering in Studio always matches the numbering on the live site.
+const SERVICE_ORDER = SERVICE_NAV_ITEMS.map((item, index) => ({
+  slug: item.href.replace('/services/', ''),
+  label: item.label,
+  number: index + 1,
+}))
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 export const structure: StructureResolver = (S) =>
@@ -36,11 +45,29 @@ export const structure: StructureResolver = (S) =>
             ]),
         ),
 
-      // ── Services folder — one entry per service page ──
+      // ── Services folder — numbered, in the same order as the site's nav.
+      // Clicking a service opens a small filtered list (usually showing just
+      // its one document) — click that document to open it. This is one
+      // extra click compared to opening directly, but it's the reliable,
+      // officially-documented pattern (no async lookups that can fail).
       S.listItem()
         .title('Services')
         .child(
-          S.documentTypeList('service').title('Services'),
+          S.list()
+            .title('Services')
+            .items(
+              SERVICE_ORDER.map((entry) =>
+                S.listItem()
+                  .title(`${entry.number}. ${entry.label}`)
+                  .child(
+                    S.documentList()
+                      .title(entry.label)
+                      .filter('_type == "service" && slug.current == $slug')
+                      .params({ slug: entry.slug })
+                      .apiVersion('2024-01-01'),
+                  ),
+              ),
+            ),
         ),
 
       S.divider(),

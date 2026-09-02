@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "brand-icons": "node scripts/generate-brand-icons.mjs"
+    "brand-icons": "node scripts/generate-brand-icons.mjs",
+    "migrate-services": "tsx scripts/migrate-services.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -41,10 +42,12 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "png-to-ico": "^3.0.2",
     "postcss": "^8.5",
     "simple-icons": "^16.27.1",
     "tailwindcss": "^4.2.0",
+    "tsx": "^4.23.13",
     "typescript": "5.7.3"
   }
 }

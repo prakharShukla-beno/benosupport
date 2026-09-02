@@ -7,6 +7,10 @@ import { ServicePageContent } from "@/components/service-page-content"
 import { toAbsoluteUrl } from "@/lib/site-url"
 import { getMergedServiceData } from "@/sanity/lib/services"
 
+// Auto-refresh from Sanity every 60 seconds — so Studio edits go live
+// without needing a new deploy.
+export const revalidate = 60
+
 export function generateStaticParams() {
   return Object.keys(servicesData).map((slug) => ({ slug }))
 }

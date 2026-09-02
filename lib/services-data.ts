@@ -91,7 +91,7 @@ export const servicesData: Record<string, ServiceData> = {
       sectionLabel: "Intro",
       title: "BEYOND CODE: HIGH-PERFORMANCE SOFTWARE ENGINEERING",
       paragraphs: [
-        "Modern businesses require more than software development â€” they require scalable engineering systems built for performance, security, and continuous innovation .",
+        "Modern businesses require more than software development — they require scalable engineering systems built for performance, security, and continuous innovation .",
         " At Beno Support, we help organizations develop cloud-native applications, SaaS platforms, mobile experiences, and API-driven ecosystems that support digital transformation and long-term business growth. ",
         " Our engineering teams combine architecture expertise, agile delivery, DevOps practices, and product-focused execution to deliver high-performance digital solutions.",
       ],
@@ -915,7 +915,7 @@ export const servicesData: Record<string, ServiceData> = {
       sectionLabel: "Intro",
       title: "Digital Product Engineering Services",
       paragraphs: [
-        "Modern digital products require more than attractive interfaces â€” they require seamless user experiences, scalable product design, and performance-focused engineering.",
+        "Modern digital products require more than attractive interfaces — they require seamless user experiences, scalable product design, and performance-focused engineering.",
         "Beno Support helps organizations create intuitive digital experiences through UX strategy, interface engineering, product design systems, and conversion-focused optimization that support business growth and customer engagement.",
         "Our product engineering teams combine UX research, UI design, frontend engineering, and digital optimization expertise to deliver scalable and user-centric digital products.",
       ],
@@ -1458,7 +1458,7 @@ export const servicesData: Record<string, ServiceData> = {
       sectionLabel: "Managed Services Capabilities",
       title: "CORE MANAGED SERVICES CAPABILITIES",
       subtitle:
-        "End-to-end IT operations management across infrastructure, service desk, governance, and compliance â€” all under one contractual SLA commitment.",
+        "End-to-end IT operations management across infrastructure, service desk, governance, and compliance — all under one contractual SLA commitment.",
       cards: [
         {
           iconName: "Settings",
@@ -1971,7 +1971,7 @@ export const servicesData: Record<string, ServiceData> = {
           iconName: "Users",
           title: "Workday",
           description:
-            "Streamline HR, finance, and workforce operations using Workdayâ€™s cloud-based enterprise platform designed for modern digital organizations.",
+            "Streamline HR, finance, and workforce operations using Workday's cloud-based enterprise platform designed for modern digital organizations.",
           features: [
             "Workday implementation",
             "Human capital management",

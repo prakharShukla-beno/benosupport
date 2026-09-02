@@ -12,6 +12,7 @@ const ICON_OPTIONS = [
   'PieChart', 'Clock', 'DollarSign',
   'Cloud', 'Network', 'GitMerge',
   'GraduationCap', 'UserCheck', 'Heart', 'BookOpen',
+  'Briefcase', 'ShieldCheck', 'Workflow',
 ].map((name) => ({ title: name, value: name }))
 
 // Reusable "capability card" shape — used by both Capabilities and Scale sections.
@@ -21,7 +22,7 @@ const capabilityCardFields = [
   defineField({
     name: 'iconName',
     title: 'Icon',
-    description: 'Card ke top-left mein chhota icon dikhega.',
+    description: 'The small icon shown in the top-left of the card.',
     type: 'string',
     options: { list: ICON_OPTIONS },
     validation: (Rule: any) => Rule.required(),
@@ -29,7 +30,7 @@ const capabilityCardFields = [
   defineField({
     name: 'title',
     title: 'Title',
-    description: 'Card ka bada bold heading. Agar 2 lines mein chahiye to Enter dabao.',
+    description: 'The card\'s bold heading. Press Enter for a 2-line title if needed.',
     type: 'text',
     rows: 2,
     validation: (Rule: any) => Rule.required(),
@@ -37,22 +38,22 @@ const capabilityCardFields = [
   defineField({
     name: 'description',
     title: 'Description',
-    description: 'Title ke neeche chhota paragraph.',
+    description: 'The short paragraph shown below the title.',
     type: 'text',
     rows: 3,
     validation: (Rule: any) => Rule.required(),
   }),
   defineField({
     name: 'highlighted',
-    title: 'Is card ko highlight karna hai?',
-    description: 'ON karne se card thoda alag/prominent dikhega baaki cards se.',
+    title: 'Highlight this card?',
+    description: 'Turning this on makes the card stand out slightly from the other cards.',
     type: 'boolean',
     initialValue: false,
   }),
   defineField({
     name: 'features',
     title: 'Bullet points (optional)',
-    description: 'Card ke andar chhote bullet points, agar chahiye.',
+    description: 'Small bullet points inside the card, if needed.',
     type: 'array',
     of: [{ type: 'string' }],
   }),
@@ -67,7 +68,7 @@ export const serviceType = defineType({
       name: 'slug',
       title: 'Slug',
       description:
-        'Yeh existing service ke URL se bilkul match hona chahiye, jaise "core-engineering-application-architecture" (jo /services/ ke baad aata hai URL mein). Doubt ho to developer se pooch lena, galat slug likhne se ye service kisi bhi page pe connect nahi hoga.',
+        'Must exactly match the existing service URL, e.g. "core-engineering-application-architecture" (the part after /services/ in the URL). Ask a developer if unsure — an incorrect slug means this content won\'t connect to any page.',
       type: 'slug',
       options: { maxLength: 200 },
       validation: (Rule) => Rule.required(),
@@ -77,25 +78,25 @@ export const serviceType = defineType({
     // it always stays as the original hardcoded value from lib/services-data.ts.
 
     // ── Hero ────────────────────────────────────────────────────
-    // Page ke sabse upar, dark navy background wala hissa.
+    // The very top of the page, dark navy background.
     defineField({
       name: 'heroImage',
       title: 'Hero image (optional)',
-      description: 'Background mein dikhne wali image.',
+      description: 'The image shown in the background.',
       type: 'image',
       group: 'hero',
     }),
     defineField({
       name: 'heroImageAlt',
       title: 'Hero image alt text (optional)',
-      description: 'Image ka chhota text-description, accessibility/SEO ke liye. Page pe kahin dikhta nahi.',
+      description: 'A short text description of the image, for accessibility/SEO. Not shown anywhere on the page itself.',
       type: 'string',
       group: 'hero',
     }),
     defineField({
       name: 'heroTagline',
       title: 'Headline — line 1',
-      description: 'Sabse badi heading ki pehli line.',
+      description: 'The first line of the large headline.',
       type: 'string',
       group: 'hero',
       validation: (Rule) => Rule.required(),
@@ -103,21 +104,21 @@ export const serviceType = defineType({
     defineField({
       name: 'heroTagline2',
       title: 'Headline — line 2 (optional)',
-      description: 'Agar heading 2-3 lines mein todni ho, yahan doosri line likho. Khaali chhod sakte ho.',
+      description: 'If the headline should break across 2–3 lines, write the second line here. Can be left empty.',
       type: 'string',
       group: 'hero',
     }),
     defineField({
       name: 'heroTagline3',
       title: 'Headline — line 3 (optional)',
-      description: 'Teesri line, agar chahiye. Khaali chhod sakte ho.',
+      description: 'A third line, if needed. Can be left empty.',
       type: 'string',
       group: 'hero',
     }),
     defineField({
       name: 'heroDescription',
       title: 'Hero paragraph',
-      description: 'Heading ke neeche wala chhota paragraph.',
+      description: 'The short paragraph shown below the headline.',
       type: 'text',
       rows: 3,
       group: 'hero',
@@ -126,18 +127,18 @@ export const serviceType = defineType({
     defineField({
       name: 'heroCtaButtons',
       title: 'Button labels (optional)',
-      description: 'Pehla item = pehla (primary) button ka text, doosra item = doosra (secondary) button ka text.',
+      description: 'First item = primary button text, second item = secondary button text.',
       type: 'array',
       of: [{ type: 'string' }],
       group: 'hero',
     }),
 
     // ── Intro ───────────────────────────────────────────────────
-    // Hero ke turant baad, white background wala chhota text section.
+    // Right after the hero, white background, short text section.
     defineField({
       name: 'introSectionLabel',
       title: 'Small label above heading',
-      description: 'Chhota sa uppercase text, heading ke upar.',
+      description: 'A short uppercase label shown above the heading.',
       type: 'string',
       group: 'intro',
       validation: (Rule) => Rule.required(),
@@ -152,7 +153,7 @@ export const serviceType = defineType({
     defineField({
       name: 'introParagraphs',
       title: 'Paragraphs',
-      description: 'Har item ek alag paragraph hai. "+ Add item" se naya paragraph jodo.',
+      description: 'Each item is a separate paragraph. Use "+ Add item" to add another paragraph.',
       type: 'array',
       of: [{ type: 'text', rows: 3 }],
       group: 'intro',
@@ -160,7 +161,7 @@ export const serviceType = defineType({
     }),
 
     // ── Capabilities ────────────────────────────────────────────
-    // Dark navy background, "cards" ka grid — jaise "Custom SaaS Development" etc.
+    // Dark navy background, grid of cards (e.g. "Custom SaaS Development").
     defineField({
       name: 'capabilitiesSectionLabel',
       title: 'Small label above heading',
@@ -186,11 +187,10 @@ export const serviceType = defineType({
     defineField({
       name: 'capabilitiesCards',
       title: 'Capability cards',
-      description: 'Neeche list collapsed hai — kisi card pe click karke usko khol sakte ho edit karne ke liye. "+ Add item" se naya card jodo.',
+      description: 'The list below is collapsed — click any card to expand and edit it. Use "+ Add item" to add a new card.',
       type: 'array',
       group: 'capabilities',
       validation: (Rule) => Rule.required().min(1),
-      options: { collapsible: true, collapsed: true },
       of: [
         {
           type: 'object',
@@ -203,7 +203,7 @@ export const serviceType = defineType({
     }),
 
     // ── Scale ───────────────────────────────────────────────────
-    // Capabilities jaisa hi ek aur cards grid, Industries section ke neeche.
+    // Another card grid, similar to Capabilities, shown below the Industries section.
     defineField({
       name: 'scaleSectionLabel',
       title: 'Small label above heading',
@@ -229,11 +229,10 @@ export const serviceType = defineType({
     defineField({
       name: 'scaleCards',
       title: 'Cards',
-      description: 'Neeche list collapsed hai — kisi card pe click karke usko khol sakte ho edit karne ke liye. "+ Add item" se naya card jodo.',
+      description: 'The list below is collapsed — click any card to expand and edit it. Use "+ Add item" to add a new card.',
       type: 'array',
       group: 'scale',
       validation: (Rule) => Rule.required().min(1),
-      options: { collapsible: true, collapsed: true },
       of: [
         {
           type: 'object',
@@ -250,7 +249,7 @@ export const serviceType = defineType({
     // original hardcoded value from lib/services-data.ts.
 
     // ── CTA (optional) ──────────────────────────────────────────
-    // Page ke aakhir ke pehle, dark navy banner.
+    // Near the bottom of the page, dark navy banner.
     defineField({
       name: 'ctaTitle',
       title: 'Heading (optional)',
@@ -273,18 +272,18 @@ export const serviceType = defineType({
     }),
 
     // ── FAQ (optional) ──────────────────────────────────────────
-    // Sabse neeche, questions/answers ki list.
+    // At the very bottom, a list of questions and answers.
     defineField({
       name: 'faq',
       title: 'FAQ',
-      description: 'Neeche list collapsed hai — kisi question pe click karke usko khol sakte ho. "+ Add item" se naya question jodo.',
+      description: 'The list below is collapsed — click any question to expand it. Use "+ Add item" to add a new question.',
       type: 'array',
       group: 'faq',
-      options: { collapsible: true, collapsed: true },
       of: [
         {
           type: 'object',
           name: 'faqItem',
+          options: { collapsible: true, collapsed: true },
           fields: [
             defineField({ name: 'question', title: 'Question', type: 'string', validation: (Rule: any) => Rule.required() }),
             defineField({ name: 'answer', title: 'Answer', type: 'text', rows: 3, validation: (Rule: any) => Rule.required() }),
