@@ -14,6 +14,9 @@ const HOMEPAGE_SECTION_TYPES = [
 // Document types organized into the "Services" folder below.
 const SERVICES_TYPES = ['service']
 
+// Standalone singleton pages (one document each) shown as their own top-level entry.
+const STANDALONE_PAGE_TYPES = ['industriesPage']
+
 // The 8 services, in the same order they appear in the site's navigation —
 // so the numbering in Studio always matches the numbering on the live site.
 const SERVICE_ORDER = SERVICE_NAV_ITEMS.map((item, index) => ({
@@ -72,10 +75,23 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // ── Industries page — a single document. "Industries We Serve" and
+      // "Technology We Use" sections are intentionally NOT editable here —
+      // they stay exactly as they are on the site.
+      S.documentTypeListItem('industriesPage').title('Industries Page'),
+
+      S.divider(),
+
       // Anything else (future document types not yet organized into a folder)
       // still shows up here automatically, so nothing ever goes missing.
       ...S.documentTypeListItems().filter((item) => {
         const id = item.getId()
-        return id && id !== 'post' && !HOMEPAGE_SECTION_TYPES.includes(id) && !SERVICES_TYPES.includes(id)
+        return (
+          id &&
+          id !== 'post' &&
+          !HOMEPAGE_SECTION_TYPES.includes(id) &&
+          !SERVICES_TYPES.includes(id) &&
+          !STANDALONE_PAGE_TYPES.includes(id)
+        )
       }),
     ])

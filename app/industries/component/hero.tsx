@@ -9,7 +9,32 @@ import { prepareHeadingWordAnimation } from '@/lib/prepare-heading-word-animatio
 import { PageBreadcrumb } from '@/components/page-breadcrumb'
 import { withHome } from '@/lib/breadcrumbs'
 
-export default function IndustriesHero() {
+// ── Used only as a FALLBACK if Sanity has no Industries Page content yet ──
+const DEFAULT_HERO_DATA = {
+  title: "AI-Powered Digital Transformation Solutions Across Industries",
+  subtitle:
+    "Helping industries modernize operations, automate workflows, improve customer experiences, and scale securely with AI, Cloud, Data, and Software Solutions.",
+  stats: [
+    { label: "15+ Years of Technology Expertise" },
+    { label: "Global Delivery Model" },
+    { label: "AI-Driven Engineering Solutions" },
+    { label: "Secure & Scalable Architecture" },
+  ],
+  cta1: "Request A Proposal",
+  cta2: "Talk To Our Experts",
+}
+
+type IndustriesHeroProps = {
+  heroData?: {
+    heroTitle?: string
+    heroSubtitle?: string
+    heroStats?: string[]
+    heroCta1?: string
+    heroCta2?: string
+  }
+}
+
+export default function IndustriesHero({ heroData }: IndustriesHeroProps) {
   const { openProposalModal } = useProposalModal()
   const sectionRef = useRef<HTMLElement>(null)
   const h1Ref = useRef<HTMLHeadingElement>(null)
@@ -17,20 +42,15 @@ export default function IndustriesHero() {
   const statsRef = useRef<HTMLDivElement>(null)
   const btnsRef = useRef<HTMLDivElement>(null)
 
-  const heroData = {
-  eyebrow: "AI-Powered Industry Solutions",
-  title: "AI-Powered Digital Transformation Solutions Across Industries",
-  subtitle:
-    "Helping industries modernize operations, automate workflows, improve customer experiences, and scale securely with AI, Cloud, Data, and Software Solutions.",
-  stats: [
-    { value: "15+",  label: "15+ Years of Technology Expertise" },
-    { value: "Global Delivery",    label: "Global Delivery Model" },
-    { value: "Ai-Driven Engineering",   label: "AI-Driven Engineering Solutions" },
-    { value: "🔒",   label: "Secure & Scalable Architecture" },
-  ],
-  cta1: "Request A Proposal",
-  cta2: "Talk To Our Experts",
-}
+  const data = {
+    title: heroData?.heroTitle || DEFAULT_HERO_DATA.title,
+    subtitle: heroData?.heroSubtitle || DEFAULT_HERO_DATA.subtitle,
+    stats: heroData?.heroStats?.length
+      ? heroData.heroStats.map((label) => ({ label }))
+      : DEFAULT_HERO_DATA.stats,
+    cta1: heroData?.heroCta1 || DEFAULT_HERO_DATA.cta1,
+    cta2: heroData?.heroCta2 || DEFAULT_HERO_DATA.cta2,
+  }
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -153,10 +173,10 @@ export default function IndustriesHero() {
         {/* Title */}
         <h1
           ref={h1Ref}
-          data-text={heroData.title}
+          data-text={data.title}
           className="mx-auto mt-8 max-w-7xl text-[3rem] font-extrabold leading-[1.22] tracking-[-2px] text-white sm:text-[4rem] lg:text-[4rem]"
         >
-          {heroData.title}
+          {data.title}
         </h1>
 
         {/* Subtitle */}
@@ -165,7 +185,7 @@ export default function IndustriesHero() {
           style={{ opacity: 0 }}
           className="mx-auto mt-8 max-w-3xl type-body text-white/85"
         >
-          {heroData.subtitle}
+          {data.subtitle}
         </p>
 
         {/* Stats */}
@@ -173,7 +193,7 @@ export default function IndustriesHero() {
           ref={statsRef}
           className="mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-5 md:grid-cols-4"
         >
-          {heroData.stats.map((s) => (
+          {data.stats.map((s) => (
             <div
               key={s.label}
               style={{ opacity: 0 }}
@@ -197,7 +217,7 @@ export default function IndustriesHero() {
             style={{ opacity: 0 }}
             className="rounded-lg bg-[#0A3A73] px-7 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#124e96]"
           >
-            {heroData.cta1}
+            {data.cta1}
           </button>
 
           <Link
@@ -207,7 +227,7 @@ export default function IndustriesHero() {
             style={{ opacity: 0 }}
             className="rounded-lg border border-[#3b67ff]/70 px-7 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-white/5"
           >
-            {heroData.cta2}
+            {data.cta2}
           </Link>
         </div>
       </div>

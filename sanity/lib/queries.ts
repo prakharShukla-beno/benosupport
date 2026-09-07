@@ -156,3 +156,95 @@ export const PROCESS_SECTION_QUERY = `*[_type == "processSection"][0]{
   description,
   phases[]{phaseWord, label, subtitle, title, description, points, image, imageAlt}
 }`
+
+// ── Industries Page ───────────────────────────────────────────────────────
+// Note: "Industries We Serve" and "Technology We Use" sections are
+// intentionally NOT included here — they stay frozen/hardcoded, by design.
+export type IndustriesSimpleCard = {
+  iconName: string
+  title: string
+  description: string
+}
+
+export type IndustriesFaqItem = {
+  question: string
+  answer: string
+}
+
+export type IndustriesPageData = {
+  heroTitle?: string
+  heroSubtitle?: string
+  heroStats?: string[]
+  heroCta1?: string
+  heroCta2?: string
+
+  challengesSectionLabel?: string
+  challengesTitle?: string
+  challengesSubtitle?: string
+  challengesCards?: IndustriesSimpleCard[]
+
+  solutionsSectionLabel?: string
+  solutionsTitle?: string
+  solutionsSubtitle?: string
+  solutionsCards?: IndustriesSimpleCard[]
+
+  outcomesSectionLabel?: string
+  outcomesTitle?: string
+  outcomesParagraph?: string
+  outcomesSubheading?: string
+  outcomesList?: string[]
+  outcomesImageUrl?: string
+
+  whyChooseSectionLabel?: string
+  whyChooseTitle?: string
+  whyChooseCards?: IndustriesSimpleCard[]
+
+  faq?: IndustriesFaqItem[]
+  faqSectionLabel?: string
+  faqTitle?: string
+  faqSubtitle?: string
+
+  ctaTitle?: string
+  ctaParagraph?: string
+  ctaPrimaryLabel?: string
+  ctaSecondaryLabel?: string
+}
+
+export const INDUSTRIES_PAGE_QUERY = `*[_type == "industriesPage"][0]{
+  heroTitle,
+  heroSubtitle,
+  heroStats,
+  heroCta1,
+  heroCta2,
+
+  challengesSectionLabel,
+  challengesTitle,
+  challengesSubtitle,
+  challengesCards[]{iconName, title, description},
+
+  solutionsSectionLabel,
+  solutionsTitle,
+  solutionsSubtitle,
+  solutionsCards[]{iconName, title, description},
+
+  outcomesSectionLabel,
+  outcomesTitle,
+  outcomesParagraph,
+  outcomesSubheading,
+  outcomesList,
+  "outcomesImageUrl": outcomesImage.asset->url,
+
+  whyChooseSectionLabel,
+  whyChooseTitle,
+  whyChooseCards[]{iconName, title, description},
+
+  faq[]{question, answer},
+  faqSectionLabel,
+  faqTitle,
+  faqSubtitle,
+
+  ctaTitle,
+  ctaParagraph,
+  ctaPrimaryLabel,
+  ctaSecondaryLabel
+}`

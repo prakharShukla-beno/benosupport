@@ -8,7 +8,8 @@ import {ctaSectionType} from './ctaSectionType'
 import {whyChooseSectionType} from './whyChooseSectionType'
 import {processSectionType} from './processSectionType'
 import {serviceType} from './serviceType'
+import {industriesPageType} from './industriesPageType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [blockContentType, postType, homeHeroType, faqSectionType, ctaSectionType, whyChooseSectionType, processSectionType, serviceType],
+  types: [blockContentType, postType, homeHeroType, faqSectionType, ctaSectionType, whyChooseSectionType, processSectionType, serviceType, industriesPageType],
 }

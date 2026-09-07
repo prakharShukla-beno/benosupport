@@ -6,7 +6,8 @@ import { Check } from "lucide-react"
 import AOS from "aos"
 import "aos/dist/aos.css"
 
-const outcomes = [
+// ── Used only as a FALLBACK if Sanity has no Industries Page content yet ──
+const DEFAULT_OUTCOMES = [
   "Reduce Manual Effort by Up to 60%",
   "Accelerate Process Efficiency",
   "Improve Customer Experience",
@@ -17,7 +18,25 @@ const outcomes = [
   "Accelerate Time-to-Market",
 ]
 
-export default function BusinessOutcomes() {
+const DEFAULT_SECTION_LABEL = "Business outcomes"
+const DEFAULT_TITLE = "Measurable Business Impact"
+const DEFAULT_PARAGRAPH =
+  "Our solutions are designed to deliver measurable results that directly support business growth and operational excellence."
+const DEFAULT_SUBHEADING = "Outcome Metrics"
+const DEFAULT_IMAGE = "/assets/IndBI.svg"
+
+type BusinessOutcomesProps = {
+  outcomesData?: {
+    outcomesSectionLabel?: string
+    outcomesTitle?: string
+    outcomesParagraph?: string
+    outcomesSubheading?: string
+    outcomesList?: string[]
+    outcomesImageUrl?: string
+  }
+}
+
+export default function BusinessOutcomes({ outcomesData }: BusinessOutcomesProps) {
   useEffect(() => {
     AOS.init({
       duration: 650,
@@ -27,24 +46,30 @@ export default function BusinessOutcomes() {
     })
   }, [])
 
+  const sectionLabel = outcomesData?.outcomesSectionLabel || DEFAULT_SECTION_LABEL
+  const title = outcomesData?.outcomesTitle || DEFAULT_TITLE
+  const paragraph = outcomesData?.outcomesParagraph || DEFAULT_PARAGRAPH
+  const subheading = outcomesData?.outcomesSubheading || DEFAULT_SUBHEADING
+  const outcomes = outcomesData?.outcomesList?.length ? outcomesData.outcomesList : DEFAULT_OUTCOMES
+  const imageUrl = outcomesData?.outcomesImageUrl || DEFAULT_IMAGE
+
   return (
     <section className="m-auto max-w-7xl bg-white px-6 py-24">
       <div className="mx-auto max-w-screen-2xl">
         <div className="mb-12" data-aos="fade-up">
           <span className="label-chip type-label font-semibold section-label-light">
-            Business outcomes
+            {sectionLabel}
           </span>
 
           <h2
             className="mb-5 text-5xl font-bold leading-tight"
             style={{ color: "#0B2B5B" }}
           >
-            Measurable Business Impact
+            {title}
           </h2>
 
           <p className="text-base leading-relaxed text-gray-500">
-            Our solutions are designed to deliver measurable results that directly
-            support business growth and operational excellence.
+            {paragraph}
           </p>
         </div>
 
@@ -56,7 +81,7 @@ export default function BusinessOutcomes() {
               data-aos="fade-up"
               data-aos-delay="100"
             >
-              Outcome Metrics
+              {subheading}
             </h3>
 
             <div className="flex flex-col">
@@ -119,7 +144,7 @@ export default function BusinessOutcomes() {
               }}
             >
               <Image
-                src="/assets/IndBI.svg"
+                src={imageUrl}
                 alt="AI precision targeting visualization"
                 fill
                 className="object-cover"
