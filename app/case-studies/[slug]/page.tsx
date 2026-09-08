@@ -5,10 +5,8 @@ import { PageCTAPrimaryButton, PageCTASection } from "@/components/page-cta"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { TALK_TO_EXPERT_HREF } from "@/lib/proposal-cta"
-import {
-  CASE_STUDY_DETAILS,
-  getCaseStudyDetailBySlug,
-} from "@/lib/case-studies-data"
+import { CASE_STUDY_DETAILS } from "@/lib/case-studies-data"
+import { getMergedCaseStudy } from "@/sanity/lib/case-studies"
 import { toAbsoluteUrl } from "@/lib/site-url"
 
 import { CaseStudyChallenges } from "../components/case-study-challenges"
@@ -18,6 +16,8 @@ import { CaseStudySolutions } from "../components/case-study-solutions"
 import { CaseStudyVision } from "../components/case-study-vision"
 import { ImpactResults } from "../components/impact-results"
 import { TechnologyStack } from "../components/technology-stack"
+
+export const revalidate = 60
 
 export function generateStaticParams() {
   return CASE_STUDY_DETAILS.map(({ slug }) => ({ slug }))
@@ -29,7 +29,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const detail = getCaseStudyDetailBySlug(slug)
+  const detail = await getMergedCaseStudy(slug)
 
   if (!detail) return { title: "Case Study Not Found | Beno Support" }
 
@@ -56,7 +56,7 @@ export default async function CaseStudyDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const detail = getCaseStudyDetailBySlug(slug)
+  const detail = await getMergedCaseStudy(slug)
 
   if (!detail) notFound()
 

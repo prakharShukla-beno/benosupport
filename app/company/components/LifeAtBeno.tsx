@@ -5,25 +5,53 @@ import Image from "next/image"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { cn } from "@/lib/utils"
+import type { CompanyLifeSlide } from "@/sanity/lib/queries"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const slides = [
-  {
-    src: "/assets/company/life_at_beno/L1_1.png",
-    alt: "Life at Beno — team collaboration",
-  },
-  {
-    src: "/assets/company/life_at_beno/life_at_beno_2_1.png",
-    alt: "Life at Beno — office culture",
-  },
+// ── Used only as a FALLBACK if Sanity has no Company Page content yet ──
+const DEFAULT_LABEL = "Culture & People"
+const DEFAULT_TITLE = "Life at Beno"
+const DEFAULT_PARAGRAPH =
+  "At Beno Support, we encourage innovation, continuous learning, collaboration, and technology-driven problem solving. Our teams work on modern digital transformation projects that create real business impact across industries."
+const DEFAULT_POINTS = [
+  "Flexible remote-first work culture",
+  "Continuous learning & upskilling programs",
+  "Diverse, inclusive engineering teams",
+  "Impactful projects across global industries",
+]
+const DEFAULT_SLIDES: Required<CompanyLifeSlide>[] = [
+  { imageUrl: "/assets/company/life_at_beno/L1_1.png", alt: "Life at Beno — team collaboration" },
+  { imageUrl: "/assets/company/life_at_beno/life_at_beno_2_1.png", alt: "Life at Beno — office culture" },
 ]
 
 const SLIDE_INTERVAL_MS = 2000
 
-export default function LifeAtBeno() {
+type LifeAtBenoProps = {
+  data?: {
+    lifeSectionLabel?: string
+    lifeTitle?: string
+    lifeParagraph?: string
+    lifePoints?: string[]
+    lifeSlides?: CompanyLifeSlide[]
+  }
+}
+
+export default function LifeAtBeno({ data }: LifeAtBenoProps) {
   const ref = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+
+  const sectionLabel = data?.lifeSectionLabel || DEFAULT_LABEL
+  const title = data?.lifeTitle || DEFAULT_TITLE
+  const paragraph = data?.lifeParagraph || DEFAULT_PARAGRAPH
+  const points = data?.lifePoints?.length ? data.lifePoints : DEFAULT_POINTS
+  const slides =
+    data?.lifeSlides?.length
+      ? data.lifeSlides.map((s, i) => ({
+          imageUrl: s.imageUrl || DEFAULT_SLIDES[i % DEFAULT_SLIDES.length].imageUrl,
+          alt: s.alt || `Life at Beno — photo ${i + 1}`,
+        }))
+      : DEFAULT_SLIDES
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -53,7 +81,7 @@ export default function LifeAtBeno() {
     }, SLIDE_INTERVAL_MS)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [slides.length])
 
   return (
     <section
@@ -65,30 +93,22 @@ export default function LifeAtBeno() {
           {/* Left */}
           <div>
             <span data-fade className="type-label section-label-light">
-              Culture &amp; People
+              {sectionLabel}
             </span>
 
             <h2
               data-fade
               className="type-heading mt-3 mb-5 text-[#0a1628]"
             >
-              Life at Beno
+              {title}
             </h2>
 
             <p data-fade className="type-body mb-6 text-[#4b5a72]">
-              At Beno Support, we encourage innovation, continuous learning,
-              collaboration, and technology-driven problem solving. Our teams
-              work on modern digital transformation projects that create real
-              business impact across industries.
+              {paragraph}
             </p>
 
             <ul data-fade className="space-y-3">
-              {[
-                "Flexible remote-first work culture",
-                "Continuous learning & upskilling programs",
-                "Diverse, inclusive engineering teams",
-                "Impactful projects across global industries",
-              ].map((point) => (
+              {points.map((point) => (
                 <li
                   key={point}
                   className="type-body flex items-start gap-2.5 text-[#4b5a72]"
@@ -107,8 +127,8 @@ export default function LifeAtBeno() {
             <div className="relative w-full">
               {slides.map((slide, index) => (
                 <Image
-                  key={slide.src}
-                  src={slide.src}
+                  key={slide.imageUrl + index}
+                  src={slide.imageUrl}
                   alt={slide.alt}
                   width={605}
                   height={403}
@@ -128,7 +148,7 @@ export default function LifeAtBeno() {
             <div className="mt-4 flex justify-center gap-2">
               {slides.map((slide, index) => (
                 <button
-                  key={slide.src}
+                  key={slide.imageUrl + index}
                   type="button"
                   aria-label={`Go to slide ${index + 1}`}
                   onClick={() => setActiveIndex(index)}

@@ -1180,6 +1180,7 @@ export function IndustriesPageClient({
   const whyChoose = {
     sectionLabel: industriesData?.whyChooseSectionLabel || DEFAULT_WHY_DATA.sectionLabel,
     title: industriesData?.whyChooseTitle || DEFAULT_WHY_DATA.title,
+    subtitle: DEFAULT_WHY_DATA.subtitle,
     cards: resolveCards(industriesData?.whyChooseCards, DEFAULT_WHY_DATA.cards),
   }
 

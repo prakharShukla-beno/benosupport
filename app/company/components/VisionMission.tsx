@@ -3,10 +3,13 @@
 import { useRef, useEffect } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import type { CompanyVisionMissionItem } from "@/sanity/lib/queries"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const items = [
+// ── Used only as a FALLBACK if Sanity has no Company Page content yet ──
+const DEFAULT_LABEL = "VISION & MISSION"
+const DEFAULT_ITEMS: CompanyVisionMissionItem[] = [
   {
     title: "Our Vision",
     text: "To become a globally trusted engineering and technology transformation partner helping organizations innovate, scale, and thrive in the digital economy.",
@@ -17,8 +20,18 @@ const items = [
   },
 ]
 
-export default function VisionMission() {
+type VisionMissionProps = {
+  data?: {
+    visionMissionSectionLabel?: string
+    visionMissionItems?: CompanyVisionMissionItem[]
+  }
+}
+
+export default function VisionMission({ data }: VisionMissionProps) {
   const ref = useRef<HTMLElement>(null)
+
+  const sectionLabel = data?.visionMissionSectionLabel || DEFAULT_LABEL
+  const items = data?.visionMissionItems?.length ? data.visionMissionItems : DEFAULT_ITEMS
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -49,7 +62,7 @@ export default function VisionMission() {
           {/* White inner card */}
           <div className="rounded-[24px] bg-white px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
             <span className="type-label mb-8 block section-label-light">
-              VISION &amp; MISSION
+              {sectionLabel}
             </span>
 
             <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-10 lg:gap-14">

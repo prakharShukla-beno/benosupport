@@ -8,16 +8,39 @@ import SocialSidebar from "@/components/social-sidebar"
 import { AnimatedCounter } from "@/components/animated-counter"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { withHome } from "@/lib/breadcrumbs"
+import type { CompanyHeroStat } from "@/sanity/lib/queries"
 
-const stats = [
-  { type: "counter" as const, value: 100, suffix: "+", label: "Global Clients" },
-  { type: "counter" as const, value: 15, suffix: "+", label: "Years Industry Experience" },
-  { type: "counter" as const, value: 24, suffix: "/7", label: "Global Delivery" },
-  { type: "text" as const, value: "AI/Cloud", label: "Enterprise Engineering Expertise" },
+// ── Used only as a FALLBACK if Sanity has no Company Page content yet ──
+const DEFAULT_TITLE = "Building Future-Ready Digital Enterprises Since 2008"
+const DEFAULT_PARAGRAPH =
+  "Beno Support is a global technology consulting and engineering company helping startups, SMBs, and enterprises modernize operations through AI, cloud, cybersecurity, and software engineering solutions."
+const DEFAULT_CTA1 = "Talk To Our Experts"
+const DEFAULT_CTA2 = "Explore Our Services"
+const DEFAULT_STATS: CompanyHeroStat[] = [
+  { displayValue: "100", suffix: "+", isCounter: true, label: "Global Clients" },
+  { displayValue: "15", suffix: "+", isCounter: true, label: "Years Industry Experience" },
+  { displayValue: "24", suffix: "/7", isCounter: true, label: "Global Delivery" },
+  { displayValue: "AI/Cloud", isCounter: false, label: "Enterprise Engineering Expertise" },
 ]
 
-export default function CompanyHero() {
+type CompanyHeroProps = {
+  heroData?: {
+    heroTitle?: string
+    heroParagraph?: string
+    heroCta1Label?: string
+    heroCta2Label?: string
+    heroStats?: CompanyHeroStat[]
+  }
+}
+
+export default function CompanyHero({ heroData }: CompanyHeroProps) {
   const sectionRef = useRef<HTMLElement>(null)
+
+  const title = heroData?.heroTitle || DEFAULT_TITLE
+  const paragraph = heroData?.heroParagraph || DEFAULT_PARAGRAPH
+  const cta1 = heroData?.heroCta1Label || DEFAULT_CTA1
+  const cta2 = heroData?.heroCta2Label || DEFAULT_CTA2
+  const stats = heroData?.heroStats?.length ? heroData.heroStats : DEFAULT_STATS
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -42,16 +65,14 @@ export default function CompanyHero() {
             data-anim
             className="mx-auto mb-6 max-w-[900px] text-[2.35rem] font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]"
           >
-            Building Future-Ready Digital Enterprises Since 2008
+            {title}
           </h1>
 
           <p
             data-anim
             className="mx-auto mb-10 max-w-[760px] type-body text-white/85 lg:mb-12"
           >
-            Beno Support is a global technology consulting and engineering company helping startups,
-            SMBs, and enterprises modernize operations through AI, cloud, cybersecurity, and software
-            engineering solutions.
+            {paragraph}
           </p>
 
           <div data-anim className="mt-9 flex flex-wrap items-center justify-center gap-4">
@@ -61,13 +82,13 @@ export default function CompanyHero() {
               rel="noopener noreferrer"
               className="rounded-lg bg-[#0A3A73] px-7 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#124e96]"
             >
-              Talk To Our Experts
+              {cta1}
             </Link>
             <Link
               href="/services"
               className="rounded-lg border border-[#3b67ff]/70 px-7 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-white/5"
             >
-              Explore Our Services
+              {cta2}
             </Link>
           </div>
         </div>
@@ -78,14 +99,14 @@ export default function CompanyHero() {
           {stats.map((s, index) => (
             <div key={s.label} className="text-center" data-anim>
               <p className="text-[28px] font-extrabold leading-none text-white lg:text-[32px]">
-                {s.type === "counter" ? (
+                {s.isCounter !== false && !isNaN(Number(s.displayValue)) ? (
                   <AnimatedCounter
-                    value={s.value}
+                    value={Number(s.displayValue)}
                     suffix={s.suffix}
                     delay={0.15 + index * 0.12}
                   />
                 ) : (
-                  s.value
+                  s.displayValue
                 )}
               </p>
               <p className="mt-2 text-[12px] font-medium leading-snug text-white/80 lg:text-[13px]">

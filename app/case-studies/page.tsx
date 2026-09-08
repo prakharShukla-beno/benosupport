@@ -6,12 +6,14 @@ import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { withHome } from "@/lib/breadcrumbs"
-import {
-  CASE_STUDIES_INDEX,
-  CASE_STUDY_LISTINGS,
-} from "@/lib/case-studies-data"
+import { CASE_STUDIES_INDEX } from "@/lib/case-studies-data"
+import { getCaseStudyListingSummaries } from "@/sanity/lib/case-studies"
 
-export default function CaseStudiesPage() {
+export const revalidate = 60
+
+export default async function CaseStudiesPage() {
+  const listings = await getCaseStudyListingSummaries()
+
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       <SiteHeader />
@@ -38,7 +40,7 @@ export default function CaseStudiesPage() {
         <section className="pb-20 pt-12 lg:pt-14">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {CASE_STUDY_LISTINGS.map((item) => (
+              {listings.map((item) => (
                 <article
                   key={item.slug}
                   className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-[#e2e8f0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_12px_40px_rgba(7,36,72,0.08)]"

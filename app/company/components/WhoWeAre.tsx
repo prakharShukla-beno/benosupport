@@ -7,8 +7,32 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function WhoWeAre() {
+// ── Used only as a FALLBACK if Sanity has no Company Page content yet ──
+const DEFAULT_LABEL = "About Us"
+const DEFAULT_TITLE = "Who We Are"
+const DEFAULT_PARAGRAPHS = [
+  "Beno Support is an engineering-led technology company focused on helping businesses build scalable digital ecosystems, modernize infrastructure, and accelerate innovation through AI-first transformation strategies.",
+  "From enterprise software development and cloud modernization to cybersecurity and intelligent automation, we partner with organizations to solve complex technology challenges with scalable engineering solutions.",
+  "Our teams combine consulting expertise, agile delivery models, cloud-native engineering, and product-focused execution to deliver measurable business outcomes.",
+]
+const DEFAULT_IMAGE = "/assets/company/benobuilding.jpg"
+
+type WhoWeAreProps = {
+  data?: {
+    whoWeAreSectionLabel?: string
+    whoWeAreTitle?: string
+    whoWeAreParagraphs?: string[]
+    whoWeAreImageUrl?: string
+  }
+}
+
+export default function WhoWeAre({ data }: WhoWeAreProps) {
   const ref = useRef<HTMLElement>(null)
+
+  const sectionLabel = data?.whoWeAreSectionLabel || DEFAULT_LABEL
+  const title = data?.whoWeAreTitle || DEFAULT_TITLE
+  const paragraphs = data?.whoWeAreParagraphs?.length ? data.whoWeAreParagraphs : DEFAULT_PARAGRAPHS
+  const imageUrl = data?.whoWeAreImageUrl || DEFAULT_IMAGE
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -35,7 +59,7 @@ export default function WhoWeAre() {
           {/* Image — LEFT */}
           <div data-fade className="w-full overflow-hidden rounded-2xl">
             <Image
-              src="/assets/company/benobuilding.jpg"
+              src={imageUrl}
               alt="Beno Support Office Building"
               width={960}
               height={1080}
@@ -48,29 +72,15 @@ export default function WhoWeAre() {
           {/* Text — RIGHT */}
           <div className="flex flex-col justify-center">
             <span data-fade className="type-label mb-4 section-label-light">
-              About Us
+              {sectionLabel}
             </span>
             <h2 data-fade className="type-heading mb-6 text-[#0a1628]">
-              Who We Are
+              {title}
             </h2>
             <div data-fade className="type-body space-y-5 text-[#4b5a72]">
-              <p>
-                Beno Support is an engineering-led technology company focused on
-                helping businesses build scalable digital ecosystems, modernize
-                infrastructure, and accelerate innovation through AI-first
-                transformation strategies.
-              </p>
-              <p>
-                From enterprise software development and cloud modernization to
-                cybersecurity and intelligent automation, we partner with
-                organizations to solve complex technology challenges with
-                scalable engineering solutions.
-              </p>
-              <p>
-                Our teams combine consulting expertise, agile delivery models,
-                cloud-native engineering, and product-focused execution to
-                deliver measurable business outcomes.
-              </p>
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
             </div>
           </div>
         </div>

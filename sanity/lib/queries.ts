@@ -248,3 +248,90 @@ export const INDUSTRIES_PAGE_QUERY = `*[_type == "industriesPage"][0]{
   ctaPrimaryLabel,
   ctaSecondaryLabel
 }`
+
+// ── Company Page ─────────────────────────────────────────────────────────
+// Note: "Our Story", "Our Journey", "Leadership Team", and "Global Presence"
+// are intentionally NOT included here — they stay frozen/hardcoded, by design.
+export type CompanyHeroStat = {
+  displayValue: string
+  suffix?: string
+  isCounter?: boolean
+  label: string
+}
+
+export type CompanyVisionMissionItem = {
+  title: string
+  text: string
+}
+
+export type CompanyCertCard = {
+  label: string
+  iconKey: string
+}
+
+export type CompanyLifeSlide = {
+  imageUrl?: string
+  alt?: string
+}
+
+export type CompanyPageData = {
+  heroTitle?: string
+  heroParagraph?: string
+  heroCta1Label?: string
+  heroCta2Label?: string
+  heroStats?: CompanyHeroStat[]
+
+  whoWeAreSectionLabel?: string
+  whoWeAreTitle?: string
+  whoWeAreParagraphs?: string[]
+  whoWeAreImageUrl?: string
+
+  visionMissionSectionLabel?: string
+  visionMissionItems?: CompanyVisionMissionItem[]
+
+  certificationsSectionLabel?: string
+  certificationsTitle?: string
+  certificationsCards?: CompanyCertCard[]
+
+  lifeSectionLabel?: string
+  lifeTitle?: string
+  lifeParagraph?: string
+  lifePoints?: string[]
+  lifeSlides?: CompanyLifeSlide[]
+
+  ctaTitle?: string
+  ctaParagraph?: string
+  ctaPrimaryLabel?: string
+  ctaSecondaryLabel?: string
+}
+
+export const COMPANY_PAGE_QUERY = `*[_type == "companyPage"][0]{
+  heroTitle,
+  heroParagraph,
+  heroCta1Label,
+  heroCta2Label,
+  heroStats[]{displayValue, suffix, isCounter, label},
+
+  whoWeAreSectionLabel,
+  whoWeAreTitle,
+  whoWeAreParagraphs,
+  "whoWeAreImageUrl": whoWeAreImage.asset->url,
+
+  visionMissionSectionLabel,
+  visionMissionItems[]{title, text},
+
+  certificationsSectionLabel,
+  certificationsTitle,
+  certificationsCards[]{label, iconKey},
+
+  lifeSectionLabel,
+  lifeTitle,
+  lifeParagraph,
+  lifePoints,
+  lifeSlides[]{"imageUrl": image.asset->url, alt},
+
+  ctaTitle,
+  ctaParagraph,
+  ctaPrimaryLabel,
+  ctaSecondaryLabel
+}`
