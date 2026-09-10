@@ -1,6 +1,6 @@
 "use client"
 
-const WHATSAPP_URL = "https://wa.me/918929884560"
+const DEFAULT_WHATSAPP_NUMBER = "918929884560"
 
 function WhatsAppIcon() {
   return (
@@ -15,10 +15,16 @@ function WhatsAppIcon() {
   )
 }
 
-export default function WhatsAppFloat() {
+export default function WhatsAppFloat({
+  whatsappNumber,
+}: {
+  whatsappNumber?: string
+}) {
+  const url = `https://wa.me/${whatsappNumber || DEFAULT_WHATSAPP_NUMBER}`
+
   return (
     <a
-      href={WHATSAPP_URL}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

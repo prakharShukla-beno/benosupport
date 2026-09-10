@@ -11,7 +11,8 @@
     "migrate-services": "tsx scripts/migrate-services.ts",
     "migrate-industries": "tsx scripts/migrate-industries.ts",
     "migrate-company": "tsx scripts/migrate-company.ts",
-    "migrate-case-studies": "tsx scripts/migrate-case-studies.ts"
+    "migrate-case-studies": "tsx scripts/migrate-case-studies.ts",
+    "migrate-site-settings": "tsx scripts/migrate-site-settings.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

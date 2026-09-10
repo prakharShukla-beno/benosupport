@@ -19,7 +19,7 @@ const SERVICES_TYPES = ['service']
 const CASE_STUDIES_TYPES = ['caseStudy']
 
 // Standalone singleton pages (one document each) shown as their own top-level entry.
-const STANDALONE_PAGE_TYPES = ['industriesPage', 'companyPage']
+const STANDALONE_PAGE_TYPES = ['industriesPage', 'companyPage', 'siteSettings']
 
 // The 8 services, in the same order they appear in the site's navigation —
 // so the numbering in Studio always matches the numbering on the live site.
@@ -121,6 +121,10 @@ export const structure: StructureResolver = (S) =>
       // "Leadership Team", and "Global Presence" are intentionally NOT
       // editable here — they stay exactly as they are on the site.
       S.documentTypeListItem('companyPage').title('Company Page'),
+
+      // ── Site Settings — a single document. Footer text and Contact page
+      // info (phone, email, WhatsApp, office addresses).
+      S.documentTypeListItem('siteSettings').title('Site Settings'),
 
       S.divider(),
 

@@ -7,6 +7,9 @@ import './globals.css'
 import SocialSidebar from '@/components/social-sidebar'
 import WhatsAppFloat from '@/components/WhatsAppFloat'
 import { ProposalModalProvider } from '@/hooks/use-proposal-modal'
+import { SiteSettingsProvider } from '@/components/site-settings-provider'
+import { client } from '@/sanity/lib/client'
+import { SITE_SETTINGS_QUERY, type SiteSettingsData } from '@/sanity/lib/queries'
 import { SITE_URL } from '@/lib/site-url'
 
 const GTM_ID = 'GTM-K2K4QPL7'
@@ -60,11 +63,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Fetched once here (root layout wraps every page) and made available to
+  // any client component via context — so no individual page needs to fetch
+  // or pass this down itself. Falls back to null (→ each component's own
+  // hardcoded defaults) if Sanity is unreachable or has no data yet.
+  const siteSettings = await client
+    .fetch<SiteSettingsData | null>(SITE_SETTINGS_QUERY)
+    .catch(() => null)
+
   return (
     <html
       lang="en"
@@ -90,12 +101,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
-        <ProposalModalProvider>
-          {children}
-        </ProposalModalProvider>
-        <SocialSidebar />
-        {/* <LiveChatWidget /> */}
-        <WhatsAppFloat />
+        <SiteSettingsProvider siteSettings={siteSettings ?? undefined}>
+          <ProposalModalProvider>
+            {children}
+          </ProposalModalProvider>
+          <SocialSidebar />
+          {/* <LiveChatWidget /> */}
+          <WhatsAppFloat whatsappNumber={siteSettings?.whatsappNumber} />
+        </SiteSettingsProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

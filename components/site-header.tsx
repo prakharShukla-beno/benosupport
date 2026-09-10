@@ -25,6 +25,7 @@ import { WHATSAPP_URL } from "@/lib/social-links"
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
 import { LATEST_POSTS_QUERY, type PostListItem } from "@/sanity/lib/queries"
+import { useSiteSettings } from "@/components/site-settings-provider"
 
 import { usePathname } from "next/navigation"
 
@@ -75,6 +76,13 @@ const LANGUAGES = [
 ]
 
 export function SiteHeader() {
+  const settings = useSiteSettings()
+  const homeLabel = settings?.headerHomeLabel || "Home"
+  const servicesLabel = settings?.headerServicesLabel || "Services"
+  const resourcesLabel = settings?.headerResourcesLabel || "Resources"
+  const ctaLabel = settings?.headerCtaLabel || "Talk To Our Experts"
+  const resolvedNavLinks = settings?.headerNavLinks?.length ? settings.headerNavLinks : navLinks
+
   const [isScrolled,       setIsScrolled]       = useState(false)
   const [isMobileOpen,     setIsMobileOpen]     = useState(false)
   const [isServicesOpen,   setIsServicesOpen]   = useState(false)
@@ -295,7 +303,7 @@ export function SiteHeader() {
     ? "text-[#3b67ff]"
     : `${textCls} ${hoverCls}`
 }`}              >
-                Home
+                {homeLabel}
               </Link>
 
               {/* Services trigger */}
@@ -308,7 +316,7 @@ export function SiteHeader() {
                 onClick={() => (svcIsOpenRef.current ? closeSvc() : openSvc())}
                 className={`flex items-center gap-1 text-[15px] font-medium transition-colors duration-200 ${activeSvcCls}`}
               >
-                Services
+                {servicesLabel}
                 <ChevronDown
                   ref={svcChevronRef}
                   className="w-4 h-4"
@@ -317,7 +325,7 @@ export function SiteHeader() {
               </button>
 
               {/* Other nav links */}
-              {navLinks.map((link) => (
+              {resolvedNavLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
@@ -341,7 +349,7 @@ export function SiteHeader() {
                 onClick={() => (resIsOpenRef.current ? closeRes() : openRes())}
                 className={`flex items-center gap-1 text-[15px] font-medium transition-colors duration-200 ${activeResCls}`}
               >
-                Resources
+                {resourcesLabel}
                 <ChevronDown
                   ref={resChevronRef}
                   className="w-4 h-4"
@@ -409,7 +417,7 @@ export function SiteHeader() {
                 `}
               >
                 <span className="flex items-center gap-2">
-                  Talk To Our Experts
+                  {ctaLabel}
                   <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none">
                     <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -563,7 +571,7 @@ export function SiteHeader() {
               onClick={() => setIsMobileOpen(false)}
               className="block py-3 text-base font-medium text-[#0d1e3c] hover:text-[#3b67ff] transition-colors"
             >
-              Home
+              {homeLabel}
             </Link>
 
             {/* Services accordion */}
@@ -572,7 +580,7 @@ export function SiteHeader() {
               className="w-full flex items-center justify-between py-3 text-base font-medium text-[#0d1e3c]"
               onClick={() => setMobileServices((v) => !v)}
             >
-              Services
+              {servicesLabel}
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileServices ? "rotate-180" : ""}`} />
             </button>
             {mobileServices && (
@@ -592,7 +600,7 @@ export function SiteHeader() {
             )}
 
             {/* Other nav links */}
-            {navLinks.map((link) => (
+            {resolvedNavLinks.map((link) => (
   <Link
     key={link.label}
     href={link.href}
@@ -613,7 +621,7 @@ export function SiteHeader() {
               className="w-full flex items-center justify-between py-3 text-base font-medium text-[#0d1e3c]"
               onClick={() => setMobileResources((v) => !v)}
             >
-              Resources
+              {resourcesLabel}
               <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileResources ? "rotate-180" : ""}`} />
             </button>
             {mobileResources && (
@@ -643,7 +651,7 @@ export function SiteHeader() {
                 onClick={() => setIsMobileOpen(false)}
                 className="w-full bg-[#072448] text-white font-semibold py-3 rounded-xl hover:bg-[#0a2d5c] transition-colors"
               >
-                Talk To Our Experts
+                {ctaLabel}
               </a>
             </div>
 

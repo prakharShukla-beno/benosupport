@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { useSiteSettings } from "@/components/site-settings-provider";
 import {
   applyBitrixContactFormShell,
   applyBitrixFormSuccessTheme,
@@ -12,6 +13,17 @@ import {
   injectBitrixFormThemeOverrides,
 } from "@/lib/bitrix-form-theme-overrides";
 import Hero from "./hero";
+
+// ── Used only as a FALLBACK if Sanity has no Site Settings content yet ──
+const DEFAULT_PHONE_1 = "+91 892-988-4560";
+const DEFAULT_PHONE_2 = "+91 120 423 4429";
+const DEFAULT_EMAIL = "info@benosupport.com";
+const DEFAULT_OFFICES = [
+  { label: "CORPORATE OFFICE", address: "B-23/C1, Block B, Sector 62, Noida, Uttar Pradesh 201309" },
+  { label: "REGISTERED OFFICE", address: "DISTRICT CENTRE, Roots Tower, 706, PLOT NO. 7, Laxmi Nagar, New Delhi, Delhi 11009" },
+  { label: "U.S OFFICE", address: "1325 Main Street, Suite 1404, Katy, TX 77494" },
+  { label: "ADDITIONAL DELIVERY LOCATIONS", address: "Lucknow | Bihar | Mumbai | Ahmedabad | Bengaluru" },
+];
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -151,6 +163,12 @@ const BITRIX_SUCCESS_VISIBLE_MS = 3500;
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ContactUsPage() {
+  const settings = useSiteSettings();
+  const phone1 = settings?.contactPhone1 || DEFAULT_PHONE_1;
+  const phone2 = settings?.contactPhone2 || DEFAULT_PHONE_2;
+  const email = settings?.contactEmail || DEFAULT_EMAIL;
+  const offices = settings?.officeLocations?.length ? settings.officeLocations : DEFAULT_OFFICES;
+
   const heroRef = useRef<HTMLElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -571,12 +589,12 @@ export default function ContactUsPage() {
                 {
                   icon: <HeadsetIcon />,
                   title: "Call Us",
-                  lines: ["+91 892-988-4560", "+91 120 423 4429"],
+                  lines: [phone1, phone2].filter(Boolean),
                 },
                 {
                   icon: <MailIcon />,
                   title: "Email Us",
-                  lines: ["info@benosupport.com"],
+                  lines: [email],
                 },
                 {
                   icon: <BuildingIcon />,
@@ -640,24 +658,7 @@ export default function ContactUsPage() {
             ref={officeCardsRef}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            {[
-              {
-                label: "CORPORATE OFFICE",
-                addr: "B-23/C1, Block B, Sector 62, Noida, Uttar Pradesh 201309",
-              },
-              {
-                label: "REGISTERED OFFICE",
-                addr: "DISTRICT CENTRE, Roots Tower, 706, PLOT NO. 7, Laxmi Nagar, New Delhi, Delhi 11009",
-              },
-              {
-                label: "U.S OFFICE",
-                addr: "1325 Main Street, Suite 1404, Katy, TX 77494",
-              },
-              {
-                label: "ADDITIONAL DELIVERY LOCATIONS",
-                addr: "Lucknow | Bihar | Mumbai | Ahmedabad | Bengaluru",
-              },
-            ].map((office) => (
+            {offices.map((office) => (
               <div
                 key={office.label}
                 className="group flex gap-4 rounded-xl bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
@@ -670,7 +671,7 @@ export default function ContactUsPage() {
                     {office.label}
                   </p>
                   <p className="text-[13px] leading-relaxed text-[#5a6a84]">
-                    {office.addr}
+                    {office.address}
                   </p>
                 </div>
               </div>
@@ -696,7 +697,7 @@ export default function ContactUsPage() {
             className="mx-auto grid max-w-[900px] grid-cols-1 gap-5 md:grid-cols-2"
           >
             <a
-              href="tel:+918929884560"
+              href={`tel:${phone1.replace(/\s/g, "")}`}
               className="group flex flex-col items-start gap-4 rounded-2xl bg-[#072448] p-7 transition-transform duration-300 hover:-translate-y-1"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#072448]">
@@ -704,12 +705,12 @@ export default function ContactUsPage() {
               </div>
               <p className="text-[18px] font-extrabold text-white">Call Us</p>
               <p className="type-body text-white/90">
-                +91 892-988-4560 , +91 120 423 4429
+                {[phone1, phone2].filter(Boolean).join(" , ")}
               </p>
             </a>
 
             <a
-              href="mailto:info@benosupport.com"
+              href={`mailto:${email}`}
               className="group flex flex-col items-start gap-4 rounded-2xl bg-[#072448] p-7 transition-transform duration-300 hover:-translate-y-1"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#072448]">
@@ -717,7 +718,7 @@ export default function ContactUsPage() {
               </div>
               <p className="text-[18px] font-extrabold text-white">Email Us</p>
               <p className="type-body text-white/90">
-                info@benosupport.com
+                {email}
               </p>
             </a>
           </div>

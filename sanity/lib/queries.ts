@@ -335,3 +335,45 @@ export const COMPANY_PAGE_QUERY = `*[_type == "companyPage"][0]{
   ctaPrimaryLabel,
   ctaSecondaryLabel
 }`
+
+
+// ── Site Settings (Footer + Contact) ────────────────────────────────────
+export type OfficeLocation = {
+  label: string
+  address: string
+}
+
+export type HeaderNavLink = {
+  label: string
+  href: string
+}
+
+export type SiteSettingsData = {
+  headerHomeLabel?: string
+  headerServicesLabel?: string
+  headerNavLinks?: HeaderNavLink[]
+  headerResourcesLabel?: string
+  headerCtaLabel?: string
+  footerTagline?: string
+  copyrightText?: string
+  contactPhone1?: string
+  contactPhone2?: string
+  contactEmail?: string
+  whatsappNumber?: string
+  officeLocations?: OfficeLocation[]
+}
+
+export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
+  headerHomeLabel,
+  headerServicesLabel,
+  headerNavLinks[]{label, href},
+  headerResourcesLabel,
+  headerCtaLabel,
+  footerTagline,
+  copyrightText,
+  contactPhone1,
+  contactPhone2,
+  contactEmail,
+  whatsappNumber,
+  officeLocations[]{label, address}
+}`

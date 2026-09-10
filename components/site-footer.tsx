@@ -1,8 +1,17 @@
+"use client"
+
 import Link from "next/link"
 import { Globe, Mail, Phone, MapPin } from "lucide-react"
-import { FOOTER_CONTACT_LINKS } from "@/lib/social-links"
+import { useSiteSettings } from "@/components/site-settings-provider"
 
 const footerContactIcons = [Globe, Mail, Phone, MapPin] as const
+
+// ── Used only as a FALLBACK if Sanity has no Site Settings content yet ──
+const DEFAULT_TAGLINE =
+  "Engineering Excellence in AI & Technology. Transforming businesses since 2008."
+const DEFAULT_COPYRIGHT = "© 2026 Beno Support. All Rights Reserved."
+const DEFAULT_PHONE = "+918929884560"
+const DEFAULT_EMAIL = "info@benosupport.com"
 
 type FooterLink =
   | { label: string; href: string }
@@ -84,6 +93,20 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
 }
 
 export function SiteFooter() {
+  const settings = useSiteSettings()
+
+  const tagline = settings?.footerTagline || DEFAULT_TAGLINE
+  const copyright = settings?.copyrightText || DEFAULT_COPYRIGHT
+  const phone = settings?.contactPhone1 || DEFAULT_PHONE
+  const email = settings?.contactEmail || DEFAULT_EMAIL
+
+  const contactIconLinks = [
+    { href: "https://www.benosupport.com", label: "Website", external: true },
+    { href: `mailto:${email}`, label: "Email us" },
+    { href: `tel:${phone.replace(/\s/g, "")}`, label: "Call us" },
+    { href: "/contact", label: "Office locations", internal: true },
+  ]
+
   return (
     <footer className="bg-[#072448] text-primary-foreground">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -93,16 +116,15 @@ export function SiteFooter() {
               <img src="/assets/whitelogo.svg" alt="Beno Support" />
             </div>
             <p className="type-body text-primary-foreground/70">
-              Engineering Excellence in AI &amp; Technology. Transforming
-              businesses since 2008.
+              {tagline}
             </p>
             <div className="flex gap-3">
-              {FOOTER_CONTACT_LINKS.map((item, i) => {
+              {contactIconLinks.map((item, i) => {
                 const Icon = footerContactIcons[i]
                 const className =
                   "flex size-9 items-center justify-center rounded-md bg-primary-foreground/10 transition-colors hover:bg-button"
 
-                if ("internal" in item && item.internal) {
+                if (item.internal) {
                   return (
                     <Link
                       key={item.label}
@@ -119,7 +141,7 @@ export function SiteFooter() {
                   <a
                     key={item.label}
                     href={item.href}
-                    {...("external" in item && item.external
+                    {...(item.external
                       ? { target: "_blank", rel: "noopener noreferrer" }
                       : {})}
                     aria-label={item.label}
@@ -149,7 +171,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-primary-foreground/15 pt-6 text-sm text-primary-foreground/60 sm:flex-row">
-          <p>© 2026 Beno Support. All Rights Reserved.</p>
+          <p>{copyright}</p>
           <div className="flex gap-6">
             <Link
               href="/terms"
