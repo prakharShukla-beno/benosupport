@@ -4,16 +4,16 @@ import { notFound } from "next/navigation"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { toAbsoluteUrl } from "@/lib/site-url"
-import {
-  getUseCaseDetailBySlug,
-  USE_CASE_LISTINGS,
-} from "@/lib/use-cases-data"
+import { USE_CASE_LISTINGS } from "@/lib/use-cases-data"
+import { getMergedUseCase } from "@/sanity/lib/use-cases"
 
 import UseCasesGrid from "../components/fintech-use-cases-grid"
 import UseCasesCta from "../components/use-cases-cta"
 import UseCasesFaq from "../components/use-cases-faq"
 import UseCasesHero from "../components/use-cases-hero"
 import WhyInvestSection from "../components/why-fintech-ai"
+
+export const revalidate = 60
 
 export function generateStaticParams() {
   return USE_CASE_LISTINGS.map(({ slug }) => ({ slug }))
@@ -25,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const detail = getUseCaseDetailBySlug(slug)
+  const detail = await getMergedUseCase(slug)
 
   if (!detail) {
     return { title: "Use Case Not Found | Beno Support" }
@@ -55,7 +55,7 @@ export default async function UseCaseDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const detail = getUseCaseDetailBySlug(slug)
+  const detail = await getMergedUseCase(slug)
 
   if (!detail) notFound()
 

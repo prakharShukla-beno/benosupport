@@ -6,9 +6,14 @@ import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { withHome } from "@/lib/breadcrumbs"
-import { USE_CASE_LISTINGS, USE_CASES_INDEX } from "@/lib/use-cases-data"
+import { USE_CASES_INDEX } from "@/lib/use-cases-data"
+import { getUseCaseListingSummaries } from "@/sanity/lib/use-cases"
 
-export default function UseCasesPage() {
+export const revalidate = 60
+
+export default async function UseCasesPage() {
+  const listings = await getUseCaseListingSummaries()
+
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       <SiteHeader />
@@ -34,7 +39,7 @@ export default function UseCasesPage() {
 
         <section className="pb-20 pt-12 lg:pt-14">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            {USE_CASE_LISTINGS.length === 0 ? (
+            {listings.length === 0 ? (
               <div className="rounded-[20px] border border-[#e2e8f0] bg-white px-8 py-16 text-center shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                 <h2 className="text-xl font-bold text-[#0a1628]">No use cases yet</h2>
                 <p className="mx-auto mt-3 max-w-md text-[15px] leading-7 text-[#64748b]">
@@ -44,7 +49,7 @@ export default function UseCasesPage() {
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {USE_CASE_LISTINGS.map((item) => (
+                {listings.map((item) => (
                   <article
                     key={item.slug}
                     className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-[#e2e8f0] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_12px_40px_rgba(7,36,72,0.08)]"

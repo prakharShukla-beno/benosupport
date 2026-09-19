@@ -1,6 +1,7 @@
 import type {StructureResolver} from 'sanity/structure'
 import {SERVICE_NAV_ITEMS} from '@/lib/site-navigation'
 import {CASE_STUDY_LISTINGS} from '@/lib/case-studies-data'
+import {USE_CASE_LISTINGS} from '@/lib/use-cases-data'
 
 // List of document type names that live inside the "Homepage" folder below.
 // When you add a new homepage section schema later, add its `name` here too.
@@ -18,6 +19,9 @@ const SERVICES_TYPES = ['service']
 // Document types organized into the "Case Studies" folder below.
 const CASE_STUDIES_TYPES = ['caseStudy']
 
+// Document types organized into the "Use Cases" folder below.
+const USE_CASES_TYPES = ['useCase']
+
 // Standalone singleton pages (one document each) shown as their own top-level entry.
 const STANDALONE_PAGE_TYPES = ['industriesPage', 'companyPage', 'siteSettings']
 
@@ -32,6 +36,14 @@ const SERVICE_ORDER = SERVICE_NAV_ITEMS.map((item, index) => ({
 // The case studies, numbered in the same order they're defined in
 // lib/case-studies-data.ts (which matches the listing page order).
 const CASE_STUDY_ORDER = CASE_STUDY_LISTINGS.map((item, index) => ({
+  slug: item.slug,
+  label: item.title,
+  number: index + 1,
+}))
+
+// The use cases, numbered in the same order they're defined in
+// lib/use-cases-data.ts (which matches the listing page order).
+const USE_CASE_ORDER = USE_CASE_LISTINGS.map((item, index) => ({
   slug: item.slug,
   label: item.title,
   number: index + 1,
@@ -112,6 +124,29 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // ── Use Cases folder — numbered, same order as the listing page.
+      S.listItem()
+        .title('Use Cases')
+        .child(
+          S.list()
+            .title('Use Cases')
+            .items(
+              USE_CASE_ORDER.map((entry) =>
+                S.listItem()
+                  .title(`${entry.number}. ${entry.label}`)
+                  .child(
+                    S.documentList()
+                      .title(entry.label)
+                      .filter('_type == "useCase" && slug.current == $slug')
+                      .params({ slug: entry.slug })
+                      .apiVersion('2024-01-01'),
+                  ),
+              ),
+            ),
+        ),
+
+      S.divider(),
+
       // ── Industries page — a single document. "Industries We Serve" and
       // "Technology We Use" sections are intentionally NOT editable here —
       // they stay exactly as they are on the site.
@@ -138,6 +173,7 @@ export const structure: StructureResolver = (S) =>
           !HOMEPAGE_SECTION_TYPES.includes(id) &&
           !SERVICES_TYPES.includes(id) &&
           !CASE_STUDIES_TYPES.includes(id) &&
+          !USE_CASES_TYPES.includes(id) &&
           !STANDALONE_PAGE_TYPES.includes(id)
         )
       }),
