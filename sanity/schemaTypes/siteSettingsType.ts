@@ -159,11 +159,42 @@ export const siteSettingsType = defineType({
         },
       ],
     }),
+
+    // ── Social Media Links ──────────────────────────────────────
+    defineField({
+      name: 'facebookUrl',
+      title: 'Facebook URL',
+      description: 'Full link, e.g. "https://www.facebook.com/benosupport". Leave empty to keep the current link.',
+      type: 'url',
+      group: 'social',
+    }),
+    defineField({
+      name: 'instagramUrl',
+      title: 'Instagram URL',
+      description: 'Full link, e.g. "https://www.instagram.com/beno.support/". Leave empty to keep the current link.',
+      type: 'url',
+      group: 'social',
+    }),
+    defineField({
+      name: 'linkedinUrl',
+      title: 'LinkedIn URL',
+      description: 'Full link, e.g. "https://in.linkedin.com/company/bensupport-technologies". Leave empty to keep the current link.',
+      type: 'url',
+      group: 'social',
+    }),
+    defineField({
+      name: 'youtubeUrl',
+      title: 'YouTube URL',
+      description: 'Full link, e.g. "https://www.youtube.com/@BenoSupport". Leave empty to keep the current link.',
+      type: 'url',
+      group: 'social',
+    }),
   ],
   groups: [
     { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
     { name: 'contact', title: 'Contact Info' },
+    { name: 'social', title: 'Social Media' },
   ],
   preview: {
     prepare() {

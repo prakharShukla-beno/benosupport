@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SOCIAL_LINKS } from "@/lib/social-links"
+import { useSiteSettings } from "@/components/site-settings-provider"
 
 if (typeof window !== "undefined") {
   try {
@@ -47,16 +48,45 @@ const YTIcon = () => (
   </svg>
 )
 
-const socials = [
-  // { ...SOCIAL_LINKS[0], icon: <XIcon />, hoverBg: "#000000", hoverBorder: "#000000" },
-  { ...SOCIAL_LINKS[0], icon: <FBIcon />, hoverBg: "#1877F2", hoverBorder: "#1877F2" },
-  { ...SOCIAL_LINKS[1], icon: <IGIcon />, hoverBg: "#E1306C", hoverBorder: "#E1306C" },
-  { ...SOCIAL_LINKS[2], icon: <LIIcon />, hoverBg: "#0A66C2", hoverBorder: "#0A66C2" },
-  { ...SOCIAL_LINKS[3], icon: <YTIcon />, hoverBg: "#FF0000", hoverBorder: "#FF0000" },
-]
-
 export default function SocialSidebar() {
   const ref = useRef<HTMLDivElement | null>(null)
+  const siteSettings = useSiteSettings()
+
+  // Each platform's link comes from Sanity when set, otherwise falls back
+  // to the original hardcoded URL in lib/social-links.ts — the icon,
+  // hover color, and order stay exactly as designed, only the destination
+  // URL is editable.
+  const socials = [
+    // { ...SOCIAL_LINKS[0], icon: <XIcon />, hoverBg: "#000000", hoverBorder: "#000000" },
+    {
+      ...SOCIAL_LINKS[0],
+      href: siteSettings?.facebookUrl || SOCIAL_LINKS[0].href,
+      icon: <FBIcon />,
+      hoverBg: "#1877F2",
+      hoverBorder: "#1877F2",
+    },
+    {
+      ...SOCIAL_LINKS[1],
+      href: siteSettings?.instagramUrl || SOCIAL_LINKS[1].href,
+      icon: <IGIcon />,
+      hoverBg: "#E1306C",
+      hoverBorder: "#E1306C",
+    },
+    {
+      ...SOCIAL_LINKS[2],
+      href: siteSettings?.linkedinUrl || SOCIAL_LINKS[2].href,
+      icon: <LIIcon />,
+      hoverBg: "#0A66C2",
+      hoverBorder: "#0A66C2",
+    },
+    {
+      ...SOCIAL_LINKS[3],
+      href: siteSettings?.youtubeUrl || SOCIAL_LINKS[3].href,
+      icon: <YTIcon />,
+      hoverBg: "#FF0000",
+      hoverBorder: "#FF0000",
+    },
+  ]
 
   useEffect(() => {
     if (!ref.current) return

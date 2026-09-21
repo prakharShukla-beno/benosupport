@@ -21,7 +21,6 @@ import {
   Users2,
 } from "lucide-react"
 import { SERVICE_NAV_ITEMS } from "@/lib/site-navigation"
-import { WHATSAPP_URL } from "@/lib/social-links"
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
 import { LATEST_POSTS_QUERY, type PostListItem } from "@/sanity/lib/queries"
@@ -402,11 +401,8 @@ export function SiteHeader() {
               </div>
 
               {/* CTA button */}
-              <a
-              
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/contact"
                 className={`
                   px-6 py-2.5 text-[15px] font-semibold rounded-xl
                   transition-colors duration-300
@@ -422,7 +418,7 @@ export function SiteHeader() {
                     <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-              </a>
+              </Link>
             </div>
 
             {/* ── Mobile hamburger ──────────────────────────────────────── */}
@@ -644,15 +640,13 @@ export function SiteHeader() {
             )}
 
             <div className="pt-4">
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/contact"
                 onClick={() => setIsMobileOpen(false)}
                 className="w-full bg-[#072448] text-white font-semibold py-3 rounded-xl hover:bg-[#0a2d5c] transition-colors"
               >
                 {ctaLabel}
-              </a>
+              </Link>
             </div>
 
             {/* Language grid — mobile */}

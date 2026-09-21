@@ -361,6 +361,10 @@ export type SiteSettingsData = {
   contactEmail?: string
   whatsappNumber?: string
   officeLocations?: OfficeLocation[]
+  facebookUrl?: string
+  instagramUrl?: string
+  linkedinUrl?: string
+  youtubeUrl?: string
 }
 
 export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
@@ -375,5 +379,9 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   contactPhone2,
   contactEmail,
   whatsappNumber,
-  officeLocations[]{label, address}
+  officeLocations[]{label, address},
+  facebookUrl,
+  instagramUrl,
+  linkedinUrl,
+  youtubeUrl
 }`

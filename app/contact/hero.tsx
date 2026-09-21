@@ -7,6 +7,7 @@ import { TALK_TO_EXPERT_HREF } from "@/lib/proposal-cta"
 import { SOCIAL_LINKS } from "@/lib/social-links"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { withHome } from "@/lib/breadcrumbs"
+import { useSiteSettings } from "@/components/site-settings-provider"
 
 interface HeroProps {
   heroRef: React.RefObject<HTMLElement | null>
@@ -26,6 +27,16 @@ export default function Hero({
   socialRef,
 }: HeroProps) {
   const { openProposalModal } = useProposalModal()
+  const siteSettings = useSiteSettings()
+
+  // Same order as SOCIAL_LINKS: Facebook, Instagram, LinkedIn, YouTube.
+  // Each falls back to the original hardcoded URL when Sanity has no value.
+  const resolvedSocialLinks = [
+    { ...SOCIAL_LINKS[0], href: siteSettings?.facebookUrl || SOCIAL_LINKS[0].href },
+    { ...SOCIAL_LINKS[1], href: siteSettings?.instagramUrl || SOCIAL_LINKS[1].href },
+    { ...SOCIAL_LINKS[2], href: siteSettings?.linkedinUrl || SOCIAL_LINKS[2].href },
+    { ...SOCIAL_LINKS[3], href: siteSettings?.youtubeUrl || SOCIAL_LINKS[3].href },
+  ]
   // const XIcon = () => (
   //   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
   //     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.622L18.244 2.25Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
@@ -164,7 +175,7 @@ export default function Hero({
         ref={socialRef}
         className="fixed right-5 top-1/2 z-50 hidden -translate-y-1/2 flex-col gap-2.5 lg:flex"
       >
-        {SOCIAL_LINKS.map((social, i) => (
+        {resolvedSocialLinks.map((social, i) => (
           <a
             key={social.label}
             href={social.href}
