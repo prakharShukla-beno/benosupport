@@ -22,8 +22,17 @@ const CASE_STUDIES_TYPES = ['caseStudy']
 // Document types organized into the "Use Cases" folder below.
 const USE_CASES_TYPES = ['useCase']
 
+// Document types organized into the "Legal Pages" folder below.
+const LEGAL_PAGES_TYPES = ['legalPage']
+
 // Standalone singleton pages (one document each) shown as their own top-level entry.
 const STANDALONE_PAGE_TYPES = ['industriesPage', 'companyPage', 'siteSettings']
+
+// The 2 legal pages, in the order they appear in the site footer.
+const LEGAL_PAGE_ORDER = [
+  { pageKey: 'privacy-policy', label: 'Privacy Policy', number: 1 },
+  { pageKey: 'terms', label: 'Terms & Conditions', number: 2 },
+]
 
 // The 8 services, in the same order they appear in the site's navigation —
 // so the numbering in Studio always matches the numbering on the live site.
@@ -147,6 +156,29 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // ── Legal Pages folder — Privacy Policy and Terms & Conditions.
+      S.listItem()
+        .title('Legal Pages')
+        .child(
+          S.list()
+            .title('Legal Pages')
+            .items(
+              LEGAL_PAGE_ORDER.map((entry) =>
+                S.listItem()
+                  .title(`${entry.number}. ${entry.label}`)
+                  .child(
+                    S.documentList()
+                      .title(entry.label)
+                      .filter('_type == "legalPage" && pageKey == $pageKey')
+                      .params({ pageKey: entry.pageKey })
+                      .apiVersion('2024-01-01'),
+                  ),
+              ),
+            ),
+        ),
+
+      S.divider(),
+
       // ── Industries page — a single document. "Industries We Serve" and
       // "Technology We Use" sections are intentionally NOT editable here —
       // they stay exactly as they are on the site.
@@ -174,6 +206,7 @@ export const structure: StructureResolver = (S) =>
           !SERVICES_TYPES.includes(id) &&
           !CASE_STUDIES_TYPES.includes(id) &&
           !USE_CASES_TYPES.includes(id) &&
+          !LEGAL_PAGES_TYPES.includes(id) &&
           !STANDALONE_PAGE_TYPES.includes(id)
         )
       }),

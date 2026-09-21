@@ -13,7 +13,8 @@ import {companyPageType} from './companyPageType'
 import {caseStudyType} from './caseStudyType'
 import {siteSettingsType} from './siteSettingsType'
 import {useCaseType} from './useCaseType'
+import {legalPageType} from './legalPageType'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [blockContentType, postType, homeHeroType, faqSectionType, ctaSectionType, whyChooseSectionType, processSectionType, serviceType, industriesPageType, companyPageType, caseStudyType, siteSettingsType, useCaseType],
+  types: [blockContentType, postType, homeHeroType, faqSectionType, ctaSectionType, whyChooseSectionType, processSectionType, serviceType, industriesPageType, companyPageType, caseStudyType, siteSettingsType, useCaseType, legalPageType],
 }
