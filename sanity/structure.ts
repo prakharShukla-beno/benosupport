@@ -3,7 +3,7 @@ import {SERVICE_NAV_ITEMS} from '@/lib/site-navigation'
 import {CASE_STUDY_LISTINGS} from '@/lib/case-studies-data'
 import {USE_CASE_LISTINGS} from '@/lib/use-cases-data'
 
-// List of document type names that live inside the "Homepage" folder below.
+// List of document type names that live inside the "Home" folder below.
 // When you add a new homepage section schema later, add its `name` here too.
 const HOMEPAGE_SECTION_TYPES = [
   'homeHero',
@@ -59,19 +59,29 @@ const USE_CASE_ORDER = USE_CASE_LISTINGS.map((item, index) => ({
 }))
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
+//
+// This sidebar mirrors the site's own header navigation, so editors can
+// find things the same way a visitor would:
+//   Home
+//   Services
+//   Industries
+//   Company
+//   Resources
+//     Insights (Posts)
+//     Use Cases
+//     Case Studies
+// Legal Pages and Site Settings aren't in the header nav, so they sit
+// below Resources as their own entries.
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
-      S.documentTypeListItem('post').title('Posts'),
-      S.divider(),
-
-      // ── Homepage folder — every editable homepage section lives inside here ──
+      // ── Home — every editable homepage section lives inside here ──
       S.listItem()
-        .title('Homepage')
+        .title('Home')
         .child(
           S.list()
-            .title('Homepage Sections')
+            .title('Home')
             .items([
               S.documentTypeListItem('homeHero').title('Hero'),
               S.documentTypeListItem('whyChooseSection').title('Why Choose Us'),
@@ -106,57 +116,77 @@ export const structure: StructureResolver = (S) =>
             ),
         ),
 
-      S.divider(),
+      // ── Industries — a single document. "Industries We Serve" and
+      // "Technology We Use" sections are intentionally NOT editable here —
+      // they stay exactly as they are on the site.
+      S.documentTypeListItem('industriesPage').title('Industries'),
 
-      // ── Case Studies folder — numbered, same order as the listing page.
-      // Clicking a case study opens a small filtered list (usually showing
-      // just its one document) — click that document to open it.
-      S.listItem()
-        .title('Case Studies')
-        .child(
-          S.list()
-            .title('Case Studies')
-            .items(
-              CASE_STUDY_ORDER.map((entry) =>
-                S.listItem()
-                  .title(`${entry.number}. ${entry.label}`)
-                  .child(
-                    S.documentList()
-                      .title(entry.label)
-                      .filter('_type == "caseStudy" && slug.current == $slug')
-                      .params({ slug: entry.slug })
-                      .apiVersion('2024-01-01'),
-                  ),
-              ),
-            ),
-        ),
+      // ── Company — a single document. "Our Story", "Our Journey",
+      // "Leadership Team", and "Global Presence" are intentionally NOT
+      // editable here — they stay exactly as they are on the site.
+      S.documentTypeListItem('companyPage').title('Company'),
 
       S.divider(),
 
-      // ── Use Cases folder — numbered, same order as the listing page.
+      // ── Resources folder — mirrors the site header's Resources
+      // dropdown: Insights (Posts), Use Cases, Case Studies.
       S.listItem()
-        .title('Use Cases')
+        .title('Resources')
         .child(
           S.list()
-            .title('Use Cases')
-            .items(
-              USE_CASE_ORDER.map((entry) =>
-                S.listItem()
-                  .title(`${entry.number}. ${entry.label}`)
-                  .child(
-                    S.documentList()
-                      .title(entry.label)
-                      .filter('_type == "useCase" && slug.current == $slug')
-                      .params({ slug: entry.slug })
-                      .apiVersion('2024-01-01'),
-                  ),
-              ),
-            ),
+            .title('Resources')
+            .items([
+              // Insights (Posts)
+              S.documentTypeListItem('post').title('Insights'),
+
+              // Use Cases — numbered, same order as the listing page.
+              S.listItem()
+                .title('Use Cases')
+                .child(
+                  S.list()
+                    .title('Use Cases')
+                    .items(
+                      USE_CASE_ORDER.map((entry) =>
+                        S.listItem()
+                          .title(`${entry.number}. ${entry.label}`)
+                          .child(
+                            S.documentList()
+                              .title(entry.label)
+                              .filter('_type == "useCase" && slug.current == $slug')
+                              .params({ slug: entry.slug })
+                              .apiVersion('2024-01-01'),
+                          ),
+                      ),
+                    ),
+                ),
+
+              // Case Studies — numbered, same order as the listing page.
+              S.listItem()
+                .title('Case Studies')
+                .child(
+                  S.list()
+                    .title('Case Studies')
+                    .items(
+                      CASE_STUDY_ORDER.map((entry) =>
+                        S.listItem()
+                          .title(`${entry.number}. ${entry.label}`)
+                          .child(
+                            S.documentList()
+                              .title(entry.label)
+                              .filter('_type == "caseStudy" && slug.current == $slug')
+                              .params({ slug: entry.slug })
+                              .apiVersion('2024-01-01'),
+                          ),
+                      ),
+                    ),
+                ),
+            ]),
         ),
 
       S.divider(),
 
       // ── Legal Pages folder — Privacy Policy and Terms & Conditions.
+      // Not part of the header nav, so it sits below Resources.
       S.listItem()
         .title('Legal Pages')
         .child(
@@ -177,20 +207,8 @@ export const structure: StructureResolver = (S) =>
             ),
         ),
 
-      S.divider(),
-
-      // ── Industries page — a single document. "Industries We Serve" and
-      // "Technology We Use" sections are intentionally NOT editable here —
-      // they stay exactly as they are on the site.
-      S.documentTypeListItem('industriesPage').title('Industries Page'),
-
-      // ── Company page — a single document. "Our Story", "Our Journey",
-      // "Leadership Team", and "Global Presence" are intentionally NOT
-      // editable here — they stay exactly as they are on the site.
-      S.documentTypeListItem('companyPage').title('Company Page'),
-
-      // ── Site Settings — a single document. Footer text and Contact page
-      // info (phone, email, WhatsApp, office addresses).
+      // ── Site Settings — a single document. Header, Footer, Contact page
+      // info, and Social Media links. Not part of the header nav either.
       S.documentTypeListItem('siteSettings').title('Site Settings'),
 
       S.divider(),
